@@ -1,0 +1,106 @@
+Day 1 — Web + React mental model (VERY important)
+Learn:
+What a component is
+What JSX is
+How React renders UI
+Practice:
+Think in components:
+Navbar
+Feed
+PostCard
+Button
+Goal:
+
+👉 You understand:
+
+“UI = components, not pages”
+
+Day 2 — HTML essentials (only what React uses)
+Learn:
+div, button, input, form
+lists (ul/li)
+basic structure
+Practice:
+
+Build mentally:
+
+login form
+post card layout
+Goal:
+
+👉 You can read JSX without confusion
+
+Day 3 — CSS essentials (ONLY layout survival kit)
+Learn:
+flexbox (CRITICAL)
+spacing (margin, padding)
+font + color basics
+Ignore:
+animations
+grid (for now)
+advanced responsive theory
+Practice:
+center a login box
+make a horizontal navbar
+Goal:
+
+👉 You can fix layout issues AI breaks
+
+Day 4 — React basics (core survival skills)
+Learn:
+components
+props
+useState
+Practice:
+function Button({ text }) {
+  return <button>{text}</button>;
+}
+Goal:
+
+👉 You understand data flow:
+
+parent → child via props
+
+Day 5 — Events + API calls (MOST IMPORTANT DAY)
+Learn:
+onClick
+fetch / axios
+async/await
+Practice:
+async function handleClick() {
+  const res = await fetch("https://your-api/posts");
+  const data = await res.json();
+}
+Goal:
+
+👉 You can answer:
+
+“Where do I call backend API?” → inside event handler or useEffect
+
+Day 6 — State + UI updates (this removes confusion forever)
+Learn:
+useState
+rendering data
+Practice:
+const [posts, setPosts] = useState([]);
+fetch posts
+display list
+Goal:
+
+👉 You understand:
+
+“UI updates when state changes”
+
+Day 7 — Full mini project (TwoCents prototype)
+
+Build:
+
+Features:
+Post feed
+Create post button
+Fetch posts from .NET API
+Show loading state
+Structure:
+Feed component
+PostCard component
+API file (important)
