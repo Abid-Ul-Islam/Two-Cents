@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Two_Cetns_Backend.Models;
+namespace TwoCents_WebApi.Models;
 
 public class RegisterRequest
 {

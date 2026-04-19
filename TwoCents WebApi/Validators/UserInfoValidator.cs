@@ -1,6 +1,6 @@
-﻿using Two_Cetns_Backend.Models;
+﻿using TwoCents_WebApi.Models;
 
-namespace Two_Cetns_Backend.Validators;
+namespace TwoCents_WebApi.Validators;
 
 public static class UserInfoValidator
 {
