@@ -30,7 +30,7 @@ public class RegisterController : ControllerBase
             Name = registerRequest.Name,
             Gender =  registerRequest.Gender,
             Email = registerRequest.Email,
-            Password = registerRequest.Password
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password)
         };
         
         await _context.Users.AddAsync(user);
