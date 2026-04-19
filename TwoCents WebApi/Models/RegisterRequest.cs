@@ -7,6 +7,6 @@ public class RegisterRequest
     [EmailAddress]
     public string Email { get; set; }
     public string Name { get; set; }
-    public Gender Gender { get; set; }
+    public string Gender { get; set; }
     public string Password { get; set; }
 }
