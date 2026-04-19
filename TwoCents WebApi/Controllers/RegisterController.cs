@@ -29,6 +29,7 @@ public class RegisterController : ControllerBase
             Id = $"{Guid.NewGuid().ToString()}",
             Name = registerRequest.Name,
             Email = registerRequest.Email,
+            Password = registerRequest.Password
         };
         
         await _context.Users.AddAsync(user);
