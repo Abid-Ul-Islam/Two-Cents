@@ -10,7 +10,18 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Blog>()
+            .HasOne(b => b.User)
+            .WithMany(u => u.Blogs)
+            .HasForeignKey(b => b.UserId);
+    }
+    
     public AppDbContext (DbContextOptions<AppDbContext> options): base(options) {}
     public DbSet<User> Users { get; set; }
+    public DbSet<Blog> Blogs { get; set; }
 }
