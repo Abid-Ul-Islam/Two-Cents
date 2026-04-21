@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
 
         if (!passwordVerified)
         {
-            return Unauthorized();
+            return Unauthorized("The given username or password does not match");
         }
 
         string refreshToken = GenerateRefreshToken();
@@ -88,7 +88,7 @@ public class AuthController : ControllerBase
 
         User user = new()
         {
-            Id = $"{Guid.NewGuid().ToString()}",
+            Id = Guid.NewGuid().ToString(),
             Name = registerRequest.Name,
             Gender = registerRequest.Gender,
             Email = registerRequest.Email,
@@ -118,11 +118,11 @@ public class AuthController : ControllerBase
 
         SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256);
 
-        Claim[] claims = new[]
-        {
+        Claim[] claims =
+        [
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-        };
+        ];
 
         JwtSecurityToken token = new(
             issuer: "TwoCents_WebApi",
