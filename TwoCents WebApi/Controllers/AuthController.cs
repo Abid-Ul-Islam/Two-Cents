@@ -13,7 +13,7 @@ using TwoCents_WebApi.Validators;
 namespace TwoCents_WebApi.Controllers;
 
 [ApiController]
-[Route("api/auth")]
+[Route("api/[Controller]")]
 
 public class AuthController : ControllerBase
 {
@@ -121,6 +121,9 @@ public class AuthController : ControllerBase
         RefreshToken? matchedToken = await _context.RefreshTokens
         .FirstOrDefaultAsync(rt => string.Equals(rt.Token, incomingToken));
 
+        User? user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == req.Email);
+
         if (matchedToken is null)
         {
             return Unauthorized();
@@ -152,6 +155,18 @@ public class AuthController : ControllerBase
                 Expires = refreshToken.ExpiresAt
             }
         );
+
+        Response.Cookies.Append(
+            AccessToken,
+            GenerateAccessToken(user!),
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(10)
+            }
+            );
 
         return Ok();
     }
