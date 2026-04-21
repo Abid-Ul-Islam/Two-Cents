@@ -18,7 +18,7 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<Blog>()
             .HasOne(b => b.User)
             .WithMany(u => u.Blogs)
-            .HasForeignKey(b => b.UserId);
+            .HasForeignKey(b => b.AuthorId);
 
 
         modelBuilder.Entity<RefreshToken>()
