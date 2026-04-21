@@ -1,14 +1,14 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TwoCents_WebApi.DbContext;
 using TwoCents_WebApi.Entities;
 using TwoCents_WebApi.Models;
 using TwoCents_WebApi.Validators;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 
 namespace TwoCents_WebApi.Controllers;
 
@@ -18,29 +18,29 @@ namespace TwoCents_WebApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
-    public AuthController(AppDbContext context)
+    public AuthController (AppDbContext context)
     {
         _context = context;
     }
-    
+
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest request)
+    public async Task<IActionResult> Login (LoginRequest request)
     {
-        var user = await _context.Users
+        User? user = await _context.Users
             .FirstOrDefaultAsync(u => u.Email == request.Email);
-        
-        var passwordVerified = false;
-        
-        if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash)) 
+
+        bool passwordVerified = false;
+
+        if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             passwordVerified = true;
-        
+
         if (!passwordVerified)
         {
             return Unauthorized();
         }
-        
-        var refreshToken = GenerateRefreshToken();
-        
+
+        string refreshToken = GenerateRefreshToken();
+
         Response.Cookies.Append(
             "RefreshToken",
             refreshToken,
@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
                 Expires = DateTime.UtcNow.AddDays(3)
             }
         );
-        
+
         Response.Cookies.Append(
             "AccessToken",
             GenerateAccessToken(user!),
@@ -65,11 +65,11 @@ public class AuthController : ControllerBase
                 Expires = DateTime.UtcNow.AddMinutes(10)
             }
             );
-        
-        
+
+
         return Ok("Logged in");
     }
-    
+
     [HttpPost("register")]
     public async Task<IActionResult> Register (RegisterRequest registerRequest)
     {
@@ -77,46 +77,54 @@ public class AuthController : ControllerBase
         {
             return BadRequest("Invalid user information. Please check the provided data and try again.");
         }
-        
+
+        bool duplicateEmail = await _context.Users
+               .AnyAsync(u => u.Email == registerRequest.Email);
+
+        if (!duplicateEmail)
+        {
+            return Conflict("Provided email is already registered");
+        }
+
         User user = new()
         {
             Id = $"{Guid.NewGuid().ToString()}",
             Name = registerRequest.Name,
-            Gender =  registerRequest.Gender,
+            Gender = registerRequest.Gender,
             Email = registerRequest.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password)
         };
-        
+
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
-        
+
         return Ok("Registration Successful");
     }
-    
+
     [HttpPost("refresh")]
-    public IActionResult GetRefreshToken(LoginRequest req)
+    public IActionResult GetRefreshToken (LoginRequest req)
     {
-        var token = Request.Cookies["RefreshToken"];
-        var refreshToken = GenerateRefreshToken();
-        
+        string? token = Request.Cookies["RefreshToken"];
+        string refreshToken = GenerateRefreshToken();
+
         return Ok();
     }
 
-    private static string GenerateAccessToken(User user)
+    private static string GenerateAccessToken (User user)
     {
-        var key = new SymmetricSecurityKey(
+        SymmetricSecurityKey key = new(
             Encoding.UTF8.GetBytes("chaitey-paro-tmi-ak-mutho-jochona.ak-mutho-golap-r-oi-nil-akash")
         );
 
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        Claim[] claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
         };
 
-        var token = new JwtSecurityToken(
+        JwtSecurityToken token = new(
             issuer: "TwoCents_WebApi",
             audience: "TwoCents_FrontEnd",
             claims: claims,
@@ -124,16 +132,16 @@ public class AuthController : ControllerBase
             signingCredentials: credentials
         );
 
-        var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+        string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
         return accessToken;
     }
 
-    private static string GenerateRefreshToken()
+    private static string GenerateRefreshToken ()
     {
-        var randomBytes = new byte[64];
+        byte[] randomBytes = new byte[64];
         RandomNumberGenerator.Fill(randomBytes);
-        var refreshToken = Convert.ToBase64String(randomBytes)
+        string refreshToken = Convert.ToBase64String(randomBytes)
             .Replace("+", "-")
             .Replace("/", "_")
             .TrimEnd('=');
