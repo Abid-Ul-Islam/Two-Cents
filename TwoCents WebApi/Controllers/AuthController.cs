@@ -18,9 +18,42 @@ namespace TwoCents_WebApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly string AccessToken = "AccessToken";
+    private readonly string RefreshToken = "RefreshToken";
     public AuthController (AppDbContext context)
     {
         _context = context;
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register (RegisterRequest registerRequest)
+    {
+        if (!UserInfoValidator.ValidateUserInfo(registerRequest))
+        {
+            return BadRequest("Invalid user information. Please check the provided data and try again.");
+        }
+
+        bool duplicateEmail = await _context.Users
+               .AnyAsync(u => u.Email == registerRequest.Email);
+
+        if (duplicateEmail)
+        {
+            return Conflict("Provided email is already registered");
+        }
+
+        User user = new()
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = registerRequest.Name,
+            Gender = registerRequest.Gender,
+            Email = registerRequest.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password)
+        };
+
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
+
+        return Ok("Registration Successful");
     }
 
     [HttpPost("login")]
@@ -44,7 +77,7 @@ public class AuthController : ControllerBase
             Id = Guid.NewGuid().ToString(),
             Token = GenerateRefreshToken(),
             ExpiresAt = DateTime.UtcNow.AddDays(3),
-            UserId = request.Email
+            UserId = user.Id
         };
 
         await _context.RefreshTokens.AddAsync(refreshToken);
@@ -52,7 +85,7 @@ public class AuthController : ControllerBase
 
 
         Response.Cookies.Append(
-            "RefreshToken",
+            RefreshToken,
             refreshToken.Token,
             new CookieOptions
             {
@@ -65,7 +98,7 @@ public class AuthController : ControllerBase
         );
 
         Response.Cookies.Append(
-            "AccessToken",
+            AccessToken,
             GenerateAccessToken(user!),
             new CookieOptions
             {
@@ -80,45 +113,13 @@ public class AuthController : ControllerBase
         return Ok("Logged in");
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register (RegisterRequest registerRequest)
-    {
-        if (!UserInfoValidator.ValidateUserInfo(registerRequest))
-        {
-            return BadRequest("Invalid user information. Please check the provided data and try again.");
-        }
-
-        bool duplicateEmail = await _context.Users
-               .AnyAsync(u => u.Email == registerRequest.Email);
-
-        if (!duplicateEmail)
-        {
-            return Conflict("Provided email is already registered");
-        }
-
-        User user = new()
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = registerRequest.Name,
-            Gender = registerRequest.Gender,
-            Email = registerRequest.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password)
-        };
-
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
-
-        return Ok("Registration Successful");
-    }
-
     [HttpPost("refresh")]
     public async Task<IActionResult> GetRefreshToken (LoginRequest req)
     {
-        string? incomingToken = Request.Cookies["RefreshToken"];
+        string? incomingToken = Request.Cookies[RefreshToken];
 
         RefreshToken? matchedToken = await _context.RefreshTokens
-                .FirstOrDefaultAsync(rt => rt.Token == incomingToken);
-
+        .FirstOrDefaultAsync(rt => string.Equals(rt.Token, incomingToken));
 
         if (matchedToken is null)
         {
@@ -133,14 +134,14 @@ public class AuthController : ControllerBase
             Id = Guid.NewGuid().ToString(),
             Token = GenerateRefreshToken(),
             ExpiresAt = DateTime.UtcNow.AddDays(3),
-            UserId = req.Email
+            UserId = matchedToken.UserId
         };
 
         await _context.RefreshTokens.AddAsync(refreshToken);
         await _context.SaveChangesAsync();
 
         Response.Cookies.Append(
-            "RefreshToken",
+            RefreshToken,
             refreshToken.Token,
             new CookieOptions
             {
@@ -155,6 +156,24 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout ()
+    {
+        string? incomingToken = Request.Cookies[RefreshToken];
+
+        RefreshToken? matchedToken = await _context.RefreshTokens
+                .FirstOrDefaultAsync(rt => rt.Token == incomingToken);
+
+        if (matchedToken is not null)
+        {
+            _context.RefreshTokens.Remove(matchedToken);
+            await _context.SaveChangesAsync();
+        }
+
+        Response.Cookies.Delete(RefreshToken);
+        Response.Cookies.Delete(AccessToken);
+        return Ok("Logged out");
+    }
     private static string GenerateAccessToken (User user)
     {
         SymmetricSecurityKey key = new(
