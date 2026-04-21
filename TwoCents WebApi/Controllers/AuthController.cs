@@ -39,18 +39,28 @@ public class AuthController : ControllerBase
             return Unauthorized("The given username or password does not match");
         }
 
-        string refreshToken = GenerateRefreshToken();
+        RefreshToken refreshToken = new()
+        {
+            Id = Guid.NewGuid().ToString(),
+            Token = GenerateRefreshToken(),
+            ExpiresAt = DateTime.UtcNow.AddDays(3),
+            UserId = request.Email
+        };
+
+        await _context.RefreshTokens.AddAsync(refreshToken);
+        await _context.SaveChangesAsync();
+
 
         Response.Cookies.Append(
             "RefreshToken",
-            refreshToken,
+            refreshToken.Token,
             new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
                 Path = "/api/auth",
-                Expires = DateTime.UtcNow.AddDays(3)
+                Expires = refreshToken.ExpiresAt
             }
         );
 
@@ -102,10 +112,45 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
-    public IActionResult GetRefreshToken (LoginRequest req)
+    public async Task<IActionResult> GetRefreshToken (LoginRequest req)
     {
-        string? token = Request.Cookies["RefreshToken"];
-        string refreshToken = GenerateRefreshToken();
+        string? incomingToken = Request.Cookies["RefreshToken"];
+
+        RefreshToken? matchedToken = await _context.RefreshTokens
+                .FirstOrDefaultAsync(rt => rt.Token == incomingToken);
+
+
+        if (matchedToken is null)
+        {
+            return Unauthorized();
+        }
+
+        _context.RefreshTokens.Remove(matchedToken);
+        await _context.SaveChangesAsync();
+
+        RefreshToken refreshToken = new()
+        {
+            Id = Guid.NewGuid().ToString(),
+            Token = GenerateRefreshToken(),
+            ExpiresAt = DateTime.UtcNow.AddDays(3),
+            UserId = req.Email
+        };
+
+        await _context.RefreshTokens.AddAsync(refreshToken);
+        await _context.SaveChangesAsync();
+
+        Response.Cookies.Append(
+            "RefreshToken",
+            refreshToken.Token,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/api/auth",
+                Expires = refreshToken.ExpiresAt
+            }
+        );
 
         return Ok();
     }
@@ -128,7 +173,7 @@ public class AuthController : ControllerBase
             issuer: "TwoCents_WebApi",
             audience: "TwoCents_FrontEnd",
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(15),
+            expires: DateTime.UtcNow.AddMinutes(10),
             signingCredentials: credentials
         );
 
