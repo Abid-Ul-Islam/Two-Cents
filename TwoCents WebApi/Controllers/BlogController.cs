@@ -26,11 +26,6 @@ public class BlogController : ControllerBase
 
         ClaimsPrincipal? principal = TokenHelper.VerifyAccessToken(accessToken);
 
-        if (principal == null)
-        {
-            return Unauthorized();
-        }
-
         string userId = principal.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         string email = principal.FindFirst(ClaimTypes.Email)!.Value;
 
@@ -51,15 +46,6 @@ public class BlogController : ControllerBase
     [HttpGet("getblog/{id}")]
     public async Task<IActionResult> GetBlog (string id)
     {
-        string accessToken = Request.Cookies["AccessToken"];
-
-        ClaimsPrincipal? principal = TokenHelper.VerifyAccessToken(accessToken);
-
-        if (principal == null)
-        {
-            return Unauthorized();
-        }
-
         Blog? blog = await _context.Blogs.FindAsync(id);
 
         if (blog == null)
@@ -74,15 +60,6 @@ public class BlogController : ControllerBase
     [HttpGet("getblogs")]
     public async Task<IActionResult> GetBlogs ()
     {
-        string accessToken = Request.Cookies["AccessToken"];
-
-        ClaimsPrincipal? principal = TokenHelper.VerifyAccessToken(accessToken);
-
-        if (principal == null)
-        {
-            return Unauthorized();
-        }
-
         List<Blog> blogs = await _context.Blogs.ToListAsync();
 
         return Ok(blogs);
