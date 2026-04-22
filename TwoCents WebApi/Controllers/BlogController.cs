@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using TwoCents_WebApi.DbContext;
 using TwoCents_WebApi.Entities;
+using TwoCents_WebApi.Helpers;
 using TwoCents_WebApi.Models;
 
 namespace TwoCents_WebApi.Controllers;
@@ -26,7 +24,7 @@ public class BlogController : ControllerBase
     {
         string accessToken = Request.Cookies["AccessToken"];
 
-        ClaimsPrincipal? principal = VerifyToken(accessToken);
+        ClaimsPrincipal? principal = TokenHelper.VerifyAccessToken(accessToken);
 
         if (principal == null)
         {
@@ -55,7 +53,7 @@ public class BlogController : ControllerBase
     {
         string accessToken = Request.Cookies["AccessToken"];
 
-        ClaimsPrincipal? principal = VerifyToken(accessToken);
+        ClaimsPrincipal? principal = TokenHelper.VerifyAccessToken(accessToken);
 
         if (principal == null)
         {
@@ -78,7 +76,7 @@ public class BlogController : ControllerBase
     {
         string accessToken = Request.Cookies["AccessToken"];
 
-        ClaimsPrincipal? principal = VerifyToken(accessToken);
+        ClaimsPrincipal? principal = TokenHelper.VerifyAccessToken(accessToken);
 
         if (principal == null)
         {
@@ -89,44 +87,7 @@ public class BlogController : ControllerBase
 
         return Ok(blogs);
     }
-    private static ClaimsPrincipal? VerifyToken (string token)
-    {
-        JwtSecurityTokenHandler tokenHandler = new();
 
-        byte[] key = Encoding.UTF8.GetBytes(
-            "chaitey-paro-tmi-ak-mutho-jochona.ak-mutho-golap-r-oi-nil-akash"
-        );
-
-        try
-        {
-            TokenValidationParameters validationParameters = new()
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-
-                ValidIssuer = "TwoCents_WebApi",
-                ValidAudience = "TwoCents_FrontEnd",
-
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-
-                ClockSkew = TimeSpan.Zero // no extra 5 min tolerance
-            };
-
-            ClaimsPrincipal principal = tokenHandler.ValidateToken(
-                token,
-                validationParameters,
-                out SecurityToken validatedToken
-            );
-
-            return principal;
-        }
-        catch
-        {
-            return null;
-        }
-    }
 }
 
 

@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using TwoCents_WebApi.DbContext;
 using TwoCents_WebApi.Entities;
+using TwoCents_WebApi.Helpers;
 using TwoCents_WebApi.Models;
 
 namespace TwoCents_WebApi.Controllers;
@@ -43,7 +39,7 @@ public class LoginController : ControllerBase
         RefreshToken refreshToken = new()
         {
             Id = Guid.NewGuid().ToString(),
-            Token = GenerateRefreshToken(),
+            Token = TokenHelper.GenerateRefreshToken(),
             ExpiresAt = DateTime.UtcNow.AddDays(3),
             UserId = user.Id
         };
@@ -66,7 +62,7 @@ public class LoginController : ControllerBase
 
         Response.Cookies.Append(
             AccessToken,
-            GenerateAccessToken(user!),
+            TokenHelper.GenerateAccessToken(user!),
             new CookieOptions
             {
                 HttpOnly = true,
@@ -78,44 +74,5 @@ public class LoginController : ControllerBase
 
 
         return Ok("Logged in");
-    }
-
-    private static string GenerateRefreshToken ()
-    {
-        byte[] randomBytes = new byte[64];
-        RandomNumberGenerator.Fill(randomBytes);
-        string refreshToken = Convert.ToBase64String(randomBytes)
-            .Replace("+", "-")
-            .Replace("/", "_")
-            .TrimEnd('=');
-
-        return refreshToken;
-    }
-
-    private static string GenerateAccessToken (User user)
-    {
-        SymmetricSecurityKey key = new(
-            Encoding.UTF8.GetBytes("chaitey-paro-tmi-ak-mutho-jochona.ak-mutho-golap-r-oi-nil-akash")
-        );
-
-        SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256);
-
-        Claim[] claims =
-        [
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-        ];
-
-        JwtSecurityToken token = new(
-            issuer: "TwoCents_WebApi",
-            audience: "TwoCents_FrontEnd",
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(10),
-            signingCredentials: credentials
-        );
-
-        string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return accessToken;
     }
 }
