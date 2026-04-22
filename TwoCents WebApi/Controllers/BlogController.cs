@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -49,8 +50,45 @@ public class BlogController : ControllerBase
         return Created();
     }
 
+    [HttpGet("getblog/{id}")]
+    public async Task<IActionResult> GetBlog (string id)
+    {
+        string accessToken = Request.Cookies["AccessToken"];
+
+        ClaimsPrincipal? principal = VerifyToken(accessToken);
+
+        if (principal == null)
+        {
+            return Unauthorized();
+        }
+
+        Blog? blog = await _context.Blogs.FindAsync(id);
+
+        if (blog == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(blog);
+    }
 
 
+    [HttpGet("getblogs")]
+    public async Task<IActionResult> GetBlogs ()
+    {
+        string accessToken = Request.Cookies["AccessToken"];
+
+        ClaimsPrincipal? principal = VerifyToken(accessToken);
+
+        if (principal == null)
+        {
+            return Unauthorized();
+        }
+
+        List<Blog> blogs = await _context.Blogs.ToListAsync();
+
+        return Ok(blogs);
+    }
     private static ClaimsPrincipal? VerifyToken (string token)
     {
         JwtSecurityTokenHandler tokenHandler = new();
