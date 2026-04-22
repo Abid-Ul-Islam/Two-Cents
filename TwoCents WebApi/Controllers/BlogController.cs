@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using TwoCents_WebApi.DbContext;
@@ -9,6 +10,8 @@ using TwoCents_WebApi.Models;
 namespace TwoCents_WebApi.Controllers;
 
 [ApiController]
+[Authorize]
+
 [Route("api/[Controller]")]
 public class BlogController : ControllerBase
 {

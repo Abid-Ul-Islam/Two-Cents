@@ -1,5 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TwoCents_WebApi.DbContext;
+
+
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -20,16 +25,13 @@ builder.Services
             ValidateIssuerSigningKey = true,
             ValidIssuer = "TwoCents_WebApi",
             ValidAudience = "TwoCents_FrontEnd",
-            IssuerSigningKey = new SymmetricSecurityKey(key)
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("chaitey-paro-tmi-ak-mutho-jochona.ak-mutho-golap-r-oi-nil-akash"))
         };
     });
 
 WebApplication app = builder.Build();
 
 app.UseHttpsRedirection();
-
-app.UseRouting();
-
 
 
 app.UseAuthentication();

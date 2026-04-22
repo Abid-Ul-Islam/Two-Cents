@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TwoCents_WebApi.DbContext;
 
 namespace TwoCents_WebApi.Controllers;
 
 [ApiController]
+[Authorize]
+
 [Route("api/[Controller]")]
 public class LogoutController : ControllerBase
 {
