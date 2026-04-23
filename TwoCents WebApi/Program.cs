@@ -33,21 +33,7 @@ builder.Services
 
             ClockSkew = TimeSpan.Zero
         };
-        
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = ctx =>
-            {
-                Console.WriteLine("FAILED: " + ctx.Exception.Message);
-                return Task.CompletedTask;
-            },
-            OnTokenValidated = ctx =>
-            {
-                Console.WriteLine("VALIDATED");
-                return Task.CompletedTask;
-            }
-        };
-        
+
     });
 
 WebApplication app = builder.Build();
