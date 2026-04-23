@@ -36,13 +36,8 @@ public class LoginController : ControllerBase
             return Unauthorized("The given username or password does not match");
         }
 
-        RefreshToken refreshToken = new()
-        {
-            Id = Guid.NewGuid().ToString(),
-            Token = TokenHelper.GenerateRefreshToken(),
-            ExpiresAt = DateTime.UtcNow.AddDays(3),
-            UserId = user.Id
-        };
+        RefreshToken refreshToken = TokenHelper.GenerateRefreshToken();
+        refreshToken.UserId = user.Id;
 
         await _context.RefreshTokens.AddAsync(refreshToken);
         await _context.SaveChangesAsync();
@@ -56,7 +51,8 @@ public class LoginController : ControllerBase
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = refreshToken.ExpiresAt
+                Expires = refreshToken.ExpiresAt,
+                Path = "api/refresh"
             }
         );
 
