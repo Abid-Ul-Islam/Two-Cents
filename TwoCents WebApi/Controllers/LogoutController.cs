@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 using TwoCents_WebApi.DbContext;
 
 namespace TwoCents_WebApi.Controllers;
 
-[ApiController]
 [Authorize]
+[ApiController]
+
 
 [Route("api/[Controller]")]
 public class LogoutController : ControllerBase
@@ -22,6 +24,8 @@ public class LogoutController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Logout ()
     {
+        var email = User.Identity.Name;
+        
         Response.Cookies.Delete(RefreshToken);
         Response.Cookies.Delete(AccessToken);
         return Ok("Logged out");
