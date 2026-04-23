@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using TwoCents_WebApi.DbContext;
 using TwoCents_WebApi.Entities;
-using TwoCents_WebApi.Helpers;
 using TwoCents_WebApi.Models;
 
 namespace TwoCents_WebApi.Controllers;
@@ -25,12 +24,7 @@ public class BlogController : ControllerBase
     [HttpPost("postblog")]
     public async Task<IActionResult> PostBlog (PostBlogRequest request)
     {
-        string accessToken = Request.Cookies["AccessToken"];
-
-        ClaimsPrincipal? principal = TokenHelper.VerifyAccessToken(accessToken);
-
-        string userId = principal.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        string email = principal.FindFirst(ClaimTypes.Email)!.Value;
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         Blog blog = new()
         {
