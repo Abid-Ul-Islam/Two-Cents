@@ -9,7 +9,7 @@ namespace TwoCents_WebApi.Helpers;
 
 public static class TokenHelper
 {
-    public static RefreshToken GenerateRefreshToken ()
+    public static RefreshToken GenerateRefreshTokenForCurrentUser (User user)
     {
         byte[] randomBytes = new byte[64];
         RandomNumberGenerator.Fill(randomBytes);
@@ -17,12 +17,13 @@ public static class TokenHelper
             .Replace("+", "-")
             .Replace("/", "_")
             .TrimEnd('=');
-        
+
         RefreshToken refreshToken = new()
         {
             Id = Guid.NewGuid().ToString(),
             Token = token,
-            ExpiresAt = DateTime.UtcNow.AddDays(3)
+            ExpiresAt = DateTime.UtcNow.AddDays(3),
+            UserId = user.Id
         };
 
         return refreshToken;

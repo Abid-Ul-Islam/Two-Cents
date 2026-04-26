@@ -36,8 +36,7 @@ public class LoginController : ControllerBase
             return Unauthorized("The given username or password does not match");
         }
 
-        RefreshToken refreshToken = TokenHelper.GenerateRefreshToken();
-        refreshToken.UserId = user.Id;
+        RefreshToken refreshToken = TokenHelper.GenerateRefreshTokenForCurrentUser(user);
 
         await _context.RefreshTokens.AddAsync(refreshToken);
         await _context.SaveChangesAsync();
