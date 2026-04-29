@@ -85,7 +85,6 @@
   background-clip: text;
   transition: opacity 0.2s;
 }
-.site-logo:hover { opacity: 0.75; }
 
 .site-tagline {
   font-family: var(--font-body);
@@ -173,14 +172,12 @@
 .btn--text-link:hover { color: var(--ink); }
 
 .btn--outline {
-  color: var(--ink);
+  color: white;
   background: transparent;
-  padding: 8px 18px;
-  border: 1px solid var(--border-dk);
+  padding: 0px 8px;
 }
 .btn--outline:hover {
-  background: var(--surface);
-  border-color: var(--silver-mid);
+  background: silver;
 }
 
 .btn--primary {
@@ -577,7 +574,7 @@
 .footer {
   background: var(--ink);
   color: var(--silver-lt);
-  padding: 60px 40px 28px;
+  padding: 20px 40px 28px;
 }
 
 .footer__top {

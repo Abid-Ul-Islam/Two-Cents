@@ -1,6 +1,6 @@
 import './HomePage.css'
 
-const CATEGORIES = ['Philosophy', 'Culture', 'Politics', 'Society', 'Technology', 'Economics', 'Science']
+const CATEGORIES = []
 
 const FEATURED_POST = {
   category: 'Philosophy',
@@ -84,9 +84,8 @@ export default function HomePage() {
 
       {/* ── Top Strip ── */}
       <div className="topstrip">
-        <span className="topstrip__date">Sunday, April 26, 2026</span>
-        <span className="topstrip__edition">Vol. I &nbsp;·&nbsp; Est. 2026</span>
-        <span className="topstrip__readers">98,000+ Readers</span>
+            <a href="#" className="btn btn--outline">Login</a>
+            <a href="#" className="btn btn--outline">Sign Up</a>
       </div>
 
       {/* ── Masthead ── */}
@@ -106,18 +105,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="masthead__bar">
-          <nav className="cat-nav" aria-label="Topics">
-            {CATEGORIES.map((cat) => (
-              <a key={cat} href="#" className="cat-nav__item">{cat}</a>
-            ))}
-          </nav>
-          <div className="masthead__auth">
-            <a href="#" className="btn btn--text-link">Login</a>
-            <a href="#" className="btn btn--outline">Sign Up</a>
-            <a href="#" className="btn btn--primary">Share Your Two Cents</a>
-          </div>
-        </div>
       </header>
 
       {/* ── Hero ── */}
@@ -189,61 +176,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Pull Quote CTA ── */}
-      <section className="pullquote-section">
-        <div className="pullquote-section__inner">
-          <div className="ornament-rule ornament-rule--center">
-            <span className="ornament-rule__line" />
-            <span className="ornament-rule__diamond">◆</span>
-            <span className="ornament-rule__line" />
-          </div>
-          <blockquote className="pullquote">
-            "The measure of intelligence is the ability to change."
-            <cite className="pullquote__cite">— Albert Einstein</cite>
-          </blockquote>
-          <p className="pullquote-section__sub">
-            Have something worth saying? This is where your perspective belongs.
-          </p>
-          <div className="pullquote-section__actions">
-            <a href="#" className="btn btn--primary btn--lg">Share Your Two Cents</a>
-            <a href="#" className="btn btn--outline">Create an Account</a>
-          </div>
-        </div>
-      </section>
-
       {/* ── Footer ── */}
       <footer className="footer">
-        <div className="footer__top">
-          <div className="footer__brand">
-            <span className="footer__logo">Two Cents</span>
-            <p className="footer__tagline">Measured thought. Earnest debate.</p>
-          </div>
-          <div className="footer__cols">
-            <div className="footer__col">
-              <h4 className="footer__col-title">Publish</h4>
-              <a href="#">Write an Essay</a>
-              <a href="#">Submission Guide</a>
-              <a href="#">Editorial Standards</a>
-            </div>
-            <div className="footer__col">
-              <h4 className="footer__col-title">Explore</h4>
-              <a href="#">All Topics</a>
-              <a href="#">Featured Authors</a>
-              <a href="#">Archives</a>
-            </div>
-            <div className="footer__col">
-              <h4 className="footer__col-title">Company</h4>
-              <a href="#">About</a>
-              <a href="#">Privacy Policy</a>
-              <a href="#">Terms of Use</a>
-            </div>
-          </div>
-        </div>
         <div className="footer__bottom">
           <span>© 2026 Two Cents. All rights reserved.</span>
-          <span className="footer__signal">
-            <span className="signal-dot" aria-hidden /> Publishing daily
-          </span>
         </div>
       </footer>
 
