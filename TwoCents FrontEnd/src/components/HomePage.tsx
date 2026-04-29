@@ -150,31 +150,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Articles Grid ── */}
-      <section className="articles-section">
-        <div className="articles-section__header">
-          <div>
-            <p className="section-kicker">Latest from our authors</p>
-            <h2 className="section-title">Recent Opinions</h2>
-          </div>
-          <a href="#" className="btn btn--outline">View all essays</a>
-        </div>
 
-        <div className="articles-grid">
-          {GRID_POSTS.map((post) => (
-            <article key={post.id} className="article-card">
-              <span className="cat-badge">{post.category}</span>
-              <h3 className="article-card__title">{post.title}</h3>
-              <p className="article-card__excerpt">{post.excerpt}</p>
-              <div className="article-card__footer">
-                <span className="article-card__author">{post.author}</span>
-                <span className="article-card__meta">{post.date} · {post.readTime} read</span>
-              </div>
-              <a href="#" className="article-card__link">Continue reading →</a>
-            </article>
-          ))}
-        </div>
-      </section>
 
       {/* ── Footer ── */}
       <footer className="footer">
