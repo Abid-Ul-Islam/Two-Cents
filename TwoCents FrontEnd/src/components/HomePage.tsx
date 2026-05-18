@@ -1,6 +1,5 @@
 import './HomePage.css'
-
-const CATEGORIES = []
+import { Link } from 'react-router-dom'
 
 const FEATURED_POST = {
   category: 'Philosophy',
@@ -84,8 +83,8 @@ export default function HomePage() {
 
       {/* ── Top Strip ── */}
       <div className="topstrip">
-            <a href="#" className="btn btn--outline">Login</a>
-            <a href="#" className="btn btn--outline">Sign Up</a>
+            <Link to="/login" className="btn btn--outline">Login</Link>
+            <Link to="/signup" className="btn btn--outline">Sign Up</Link>
       </div>
 
       {/* ── Masthead ── */}
@@ -160,5 +159,5 @@ export default function HomePage() {
       </footer>
 
     </div>
-  )
+  );
 }
