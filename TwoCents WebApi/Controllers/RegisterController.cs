@@ -47,6 +47,9 @@ public class RegisterController : ControllerBase
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
-        return Ok("Registration Successful");
+        return Ok(new
+        {
+         message = "Registration Successful"   
+        });
     }
 }

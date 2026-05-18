@@ -9,12 +9,12 @@
     }
   },
   "profiles": {
-    "https": {
+    "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
-      "applicationUrl": "https://localhost:7105;",
+      "applicationUrl": "http://localhost:7104",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
