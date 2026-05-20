@@ -1,5 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import './SignupPage.css';
+
+const PANEL_TEASERS = [
+  { id: 1, category: 'Economics', title: 'Scarcity Was Always a Story We Told Ourselves' },
+  { id: 2, category: 'Society', title: 'Why We Stopped Arguing and Started Performing' },
+  { id: 3, category: 'Science', title: 'Certainty Is the Enemy of Inquiry' },
+]
 
 async function getApiResponse(name, email, gender, password) {
   try {
@@ -24,7 +31,7 @@ async function getApiResponse(name, email, gender, password) {
   }
 }
 
-function  SignupPage() {
+function SignupPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -44,160 +51,178 @@ function  SignupPage() {
     });
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
 
-  if (!formData.name || !formData.email || !formData.password) {
-    setError("All fields are required");
-    return;
-  }
+    if (!formData.name || !formData.email || !formData.password) {
+      setError("All fields are required");
+      return;
+    }
 
-  if (formData.password !== formData.confirmPassword) {
-    setError("Passwords do not match");
-    return;
-  }
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
-  try {
-    const data = await getApiResponse(
-      formData.name,
-      formData.email,
-      formData.gender,
-      formData.password
-    );
+    try {
+      const data = await getApiResponse(
+        formData.name,
+        formData.email,
+        formData.gender,
+        formData.password
+      );
 
-    console.log("API response:", data);
+      console.log("API response:", data);
 
-    // navigate ONLY after success
-    navigate("/login");
+      // navigate ONLY after success
+      navigate("/login");
 
-  } catch (err) {
-    console.error(err);
-    setError("Something went wrong");
-  }
-};
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong");
+    }
+  };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Create Account</h2>
+    <div className="page">
 
-        {error && <p style={styles.error}>{error}</p>}
+      {/* ── Split Body ── */}
+      <div className="sp-body">
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <input
-            name="name"
-            type="text"
-            placeholder="Full Name"
-            value={formData.name}
-            onChange={handleChange}
-            style={styles.input}
-            minLength={3}
-          />
+        {/* Left: Dark Panel */}
+        <div className="sp-panel">
+          <Link to="/" className="sp-panel__home">← Home</Link>
+          <div className="sp-panel__top">
+            <div className="sp-panel__ornament">
+              <span className="sp-panel__ornament-line" />
+              <span className="sp-panel__ornament-diamond">◆</span>
+              <span className="sp-panel__ornament-line" />
+            </div>
+            <Link to="/" className="sp-panel__logo">Two Cents</Link>
+            <p className="sp-panel__tagline">Good writing finds its people here.</p>
+            <div className="sp-panel__ornament">
+              <span className="sp-panel__ornament-line" />
+              <span className="sp-panel__ornament-diamond">◆</span>
+              <span className="sp-panel__ornament-line" />
+            </div>
+          </div>
 
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            style={styles.input}
-          />
+          <blockquote className="sp-panel__quote">
+            <p>"To write is to think, and to think is to be free."</p>
+            <cite>— Two Cents</cite>
+          </blockquote>
 
-        <input
-            name="gender"
-            type="text"
-            placeholder="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            style={styles.input}
-          />
+          <div className="sp-panel__teasers">
+            <div className="sp-panel__teasers-heading">What Awaits You</div>
+            {PANEL_TEASERS.map((t, idx) => (
+              <div key={t.id} className="sp-panel__teaser">
+                <span className="sp-panel__teaser-num">{String(idx + 1).padStart(2, '0')}</span>
+                <div>
+                  <span className="sp-panel__teaser-cat">{t.category}</span>
+                  <span className="sp-panel__teaser-title">{t.title}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            style={styles.input}
-          />
+        {/* Right: Form */}
+        <div className="sp-form-side">
+          <Link to="/login" className="sp-form-side__nav">Login →</Link>
+          <div className="sp-card">
+            <div className="sp-card__header">
+              <h2 className="sp-card__title">Create Account</h2>
+              <p className="sp-card__subtitle">Join the conversation</p>
+            </div>
 
-          <input
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            style={styles.input}
-          />
+            {error && <p className="sp-error">{error}</p>}
 
-          <button type="submit" style={styles.button}>
-            Sign Up
-          </button>
-        </form>
+            <form onSubmit={handleSubmit} className="sp-form">
+              <div className="sp-field">
+                <label className="sp-label">Full Name</label>
+                <input
+                  name="name"
+                  type="text"
+                  placeholder="Your full name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="sp-input"
+                  minLength={3}
+                />
+              </div>
 
-        <p style={styles.footer}>
-          Already have an account?{" "}
-          <Link to="/login" style={styles.link}>
-            Login
-          </Link>
-        </p>
+              <div className="sp-field">
+                <label className="sp-label">Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="sp-input"
+                />
+              </div>
+
+              <div className="sp-field">
+                <label className="sp-label">Gender</label>
+                <input
+                  name="gender"
+                  type="text"
+                  placeholder="e.g. Male / Female"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className="sp-input"
+                />
+              </div>
+
+              <div className="sp-field">
+                <label className="sp-label">Password</label>
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="Choose a password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="sp-input"
+                />
+              </div>
+
+              <div className="sp-field">
+                <label className="sp-label">Confirm Password</label>
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Repeat your password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="sp-input"
+                />
+              </div>
+
+              <button type="submit" className="sp-submit">
+                Sign Up
+              </button>
+            </form>
+
+            <p className="sp-footer-note">
+              Already have an account?{" "}
+              <Link to="/login" className="sp-link">Login</Link>
+            </p>
+          </div>
+        </div>
+
       </div>
+
+      {/* ── Footer ── */}
+      <footer className="sp-footer">
+        <div className="sp-footer__bottom">
+          <span>© 2026 Two Cents. All rights reserved.</span>
+        </div>
+      </footer>
+
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  page: {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#f4f6f8",
-  },
-  card: {
-    width: "350px",
-    padding: "30px",
-    background: "#fff",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-    textAlign: "center",
-  },
-  title: {
-    marginBottom: "20px",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  input: {
-    padding: "10px",
-    margin: "8px 0",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-    outline: "none",
-  },
-  button: {
-    marginTop: "10px",
-    padding: "10px",
-    backgroundColor: "#007bff",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-  },
-  error: {
-    color: "red",
-    fontSize: "14px",
-  },
-  footer: {
-    marginTop: "15px",
-    fontSize: "14px",
-  },
-  link: {
-    color: "#007bff",
-    textDecoration: "none",
-  },
-};
 
 export default SignupPage;

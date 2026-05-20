@@ -1,155 +1,95 @@
 import './HomePage.css'
 import { Link } from 'react-router-dom'
 
-const FEATURED_POST = {
-  category: 'Philosophy',
-  title: 'The Slow Erosion of Solitude in a Connected Age',
-  excerpt:
-    'We have engineered away every pocket of silence, and in doing so, may have silenced the very faculty that makes us thoughtful. The consequences run deeper than anyone cares to admit.',
-  author: 'Nathaniel Howe',
-  date: 'April 26, 2026',
-  readTime: '7 min',
-}
-
-const SIDEBAR_POSTS = [
-  {
-    id: 1,
-    category: 'Culture',
-    title: 'What We Lose When Expertise Becomes Unfashionable',
-    author: 'Vera Sinclair',
-    date: 'April 24, 2026',
-    readTime: '5 min',
-  },
-  {
-    id: 2,
-    category: 'Politics',
-    title: 'On the Virtue of Changing One\'s Mind',
-    author: 'Kwame Osei',
-    date: 'April 22, 2026',
-    readTime: '6 min',
-  },
-  {
-    id: 3,
-    category: 'Technology',
-    title: 'The Algorithm Has No Opinion — Or Does It?',
-    author: 'Lena Marsh',
-    date: 'April 20, 2026',
-    readTime: '4 min',
-  },
-]
-
-const GRID_POSTS = [
-  {
-    id: 1,
-    category: 'Economics',
-    title: 'Scarcity Was Always a Story We Told Ourselves',
-    author: 'Tobias Wren',
-    date: 'April 25, 2026',
-    readTime: '8 min',
-    excerpt: 'The narratives that justify inequality are older than capitalism — and just as constructed.',
-  },
-  {
-    id: 2,
-    category: 'Society',
-    title: 'Why We Stopped Arguing and Started Performing',
-    author: 'Ines Calloway',
-    date: 'April 23, 2026',
-    readTime: '5 min',
-    excerpt: 'Public discourse has become a stage. The audience matters more than the argument.',
-  },
-  {
-    id: 3,
-    category: 'Science',
-    title: 'Certainty Is the Enemy of Inquiry',
-    author: 'Dr. Arun Mehta',
-    date: 'April 21, 2026',
-    readTime: '6 min',
-    excerpt: 'The most dangerous words in any laboratory are "we already know the answer."',
-  },
-  {
-    id: 4,
-    category: 'Culture',
-    title: 'The Book You Never Finished Says More Than the One You Did',
-    author: 'Sofia Renard',
-    date: 'April 19, 2026',
-    readTime: '4 min',
-    excerpt: 'Abandonment is also a form of reading. What we put down reveals what we truly believe.',
-  },
-]
 
 export default function HomePage() {
   return (
     <div className="page">
 
-      {/* ── Top Strip ── */}
-      <div className="topstrip">
-            <Link to="/login" className="btn btn--outline">Login</Link>
-            <Link to="/signup" className="btn btn--outline">Sign Up</Link>
-      </div>
-
-      {/* ── Masthead ── */}
-      <header className="masthead">
-        <div className="masthead__identity">
-          <div className="ornament-rule">
-            <span className="ornament-rule__line" />
-            <span className="ornament-rule__diamond">◆</span>
-            <span className="ornament-rule__line" />
-          </div>
-          <a href="#" className="site-logo">Two Cents</a>
-          <p className="site-tagline">Where every considered opinion finds its place</p>
-          <div className="ornament-rule">
-            <span className="ornament-rule__line" />
-            <span className="ornament-rule__diamond">◆</span>
-            <span className="ornament-rule__line" />
-          </div>
-        </div>
-
-      </header>
-
       {/* ── Hero ── */}
       <section className="hero">
-        <div className="hero__lead">
-          <span className="cat-badge">{FEATURED_POST.category}</span>
-          <span className="featured-label">Editor's Pick</span>
-          <h1 className="hero__title">{FEATURED_POST.title}</h1>
-          <p className="hero__excerpt">{FEATURED_POST.excerpt}</p>
-          <div className="hero__byline">
-            <span className="byline__author">{FEATURED_POST.author}</span>
-            <span className="byline__sep" aria-hidden />
-            <span className="byline__meta">{FEATURED_POST.date} · {FEATURED_POST.readTime} read</span>
-          </div>
-          <a href="#" className="btn btn--read">Read Essay →</a>
+
+        {/* Slim auth strip */}
+        <div className="hero__strip">
+          <Link to="/login" className="strip-link">Login</Link>
+          <Link to="/signup" className="strip-btn">Sign Up</Link>
         </div>
 
-        <aside className="hero__sidebar">
-          <h3 className="sidebar__heading">Also Trending</h3>
-          <div className="sidebar__posts">
-            {SIDEBAR_POSTS.map((post, idx) => (
-              <a key={post.id} href="#" className="sidebar-post">
-                <span className="sidebar-post__num">{String(idx + 1).padStart(2, '0')}</span>
-                <div className="sidebar-post__body">
-                  <span className="cat-badge cat-badge--sm">{post.category}</span>
-                  <h4 className="sidebar-post__title">{post.title}</h4>
-                  <span className="sidebar-post__meta">{post.author} · {post.readTime} read</span>
-                </div>
-              </a>
-            ))}
+        {/* Masthead */}
+        <div className="hero__masthead">
+          <div className="hero__masthead-rules">
+            <span className="hero__masthead-rule--thick" />
+            <span className="hero__masthead-rule--thin" />
           </div>
-        </aside>
+          <a href="#" className="hero__logo">Two Cents</a>
+          <div className="hero__masthead-rules">
+            <span className="hero__masthead-rule--thin" />
+            <span className="hero__masthead-rule--thick" />
+          </div>
+        </div>
+
+        <div className="hero__masthead-fade" />
+
+        <div className="hero__content">
+          <div className="hero__ornament">
+            <span className="hero__ornament-line" />
+            <span className="hero__ornament-diamond">◆</span>
+            <span className="hero__ornament-line" />
+          </div>
+
+          <p className="hero__kicker">Read more. Think more. Say more.</p>
+
+          <h1 className="hero__headline">
+            Good writing finds its people here.
+          </h1>
+
+          <p className="hero__subtext">
+            A place for the kind of thinking that doesn't fit in a caption.
+          </p>
+
+          <a href="#" className="cta-secondary">Browse Essays →</a>
+        </div>
+
       </section>
 
-      {/* ── Epigraph strip ── */}
-      <div className="epigraph">
-        <div className="epigraph__track">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="epigraph__item">
-              "The mind is not a vessel to be filled, but a fire to be kindled." — Plutarch &emsp;◆&emsp;
-            </span>
-          ))}
+      {/* ── Value props ── */}
+      <div className="props">
+        <div className="prop">
+          <span className="prop__label">Read</span>
+          <h3 className="prop__title">Essays worth your time</h3>
+          <p className="prop__body">
+            Discover long-form opinions across philosophy, culture, politics, science, and more.
+          </p>
+        </div>
+        <div className="prop">
+          <span className="prop__label">Write</span>
+          <h3 className="prop__title">Share your two cents</h3>
+          <p className="prop__body">
+            Publish your considered opinion to an audience that actually wants to read it.
+          </p>
+        </div>
+        <div className="prop">
+          <span className="prop__label">Connect</span>
+          <h3 className="prop__title">Join the conversation</h3>
+          <p className="prop__body">
+            A growing community of thoughtful readers and writers who believe words still matter.
+          </p>
         </div>
       </div>
 
-
+      {/* ── Manifesto ── */}
+      <div className="manifesto">
+        <div className="manifesto__ornament">
+          <span className="manifesto__ornament-line" />
+          <span className="manifesto__ornament-diamond">◆</span>
+          <span className="manifesto__ornament-line" />
+        </div>
+        <p className="manifesto__quote">
+          "The world does not lack opinions. It lacks considered ones."
+        </p>
+        <span className="manifesto__cite">— Two Cents</span>
+        <Link to="/signup" className="manifesto__link">Join the conversation</Link>
+      </div>
 
       {/* ── Footer ── */}
       <footer className="footer">
@@ -159,5 +99,5 @@ export default function HomePage() {
       </footer>
 
     </div>
-  );
+  )
 }
