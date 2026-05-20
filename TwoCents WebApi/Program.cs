@@ -50,8 +50,6 @@ builder.Services
 
 WebApplication app = builder.Build();
 
-app.UseHttpsRedirection();
-
 app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
