@@ -34,20 +34,18 @@ export default function LoginPage() {
       return;
     }
 
-    // TODO: Call the login API here
-    // POST to /api/login with { Email: formData.email, Password: formData.password }
-    // The API sets HttpOnly cookies (AccessToken, RefreshToken) on success.
-    //
-    // Example:
-    //   const res = await fetch("http://localhost:7104/api/login", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     credentials: "include",   // <-- needed so the browser stores the HttpOnly cookies
-    //     body: JSON.stringify({ Email: formData.email, Password: formData.password }),
-    //   });
-    //
-    // On success (res.ok):  navigate("/")  or wherever the post-login landing page will be
-    // On failure (401):     setError("Invalid email or password")
+
+      const res = await fetch("http://localhost:7104/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ Email: formData.email, Password: formData.password }),
+      });
+
+      if (res.ok)
+      {
+        navigate("/dashboard")
+      }
+    
   };
 
   return (
