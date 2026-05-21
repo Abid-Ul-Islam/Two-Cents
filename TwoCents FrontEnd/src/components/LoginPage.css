@@ -284,9 +284,19 @@
   transition: background 0.2s, transform 0.15s;
   border-radius: 0;
 }
-.lp-submit:hover {
+.lp-submit:hover:not(:disabled) {
   background: var(--ink-mid);
   transform: translateY(-1px);
+}
+.lp-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: btn-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes btn-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 0.4; }
 }
 
 .lp-error {
