@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using TwoCents_WebApi.Entities;
 
+
 namespace TwoCents_WebApi.Helpers;
 
 public static class TokenHelper
@@ -54,44 +55,5 @@ public static class TokenHelper
         string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
         return accessToken;
-    }
-
-    public static ClaimsPrincipal? VerifyAccessToken (string token)
-    {
-        JwtSecurityTokenHandler tokenHandler = new();
-
-        byte[] key = Encoding.UTF8.GetBytes(
-            "chaitey-paro-tmi-ak-mutho-jochona.ak-mutho-golap-r-oi-nil-akash"
-        );
-
-        try
-        {
-            TokenValidationParameters validationParameters = new()
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-
-                ValidIssuer = "TwoCents_WebApi",
-                ValidAudience = "TwoCents_FrontEnd",
-
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-
-                ClockSkew = TimeSpan.Zero // no extra 5 min tolerance
-            };
-
-            ClaimsPrincipal principal = tokenHandler.ValidateToken(
-                token,
-                validationParameters,
-                out SecurityToken validatedToken
-            );
-
-            return principal;
-        }
-        catch
-        {
-            return null;
-        }
     }
 }
