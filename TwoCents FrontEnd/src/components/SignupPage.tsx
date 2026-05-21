@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { BASE_URL } from '../config';
+import { useAuth } from '../context/AuthContext';
 import './SignupPage.css';
 
 const PANEL_TEASERS = [
@@ -11,6 +13,11 @@ const PANEL_TEASERS = [
 
 function SignupPage() {
   const navigate = useNavigate();
+  const { isLoggedIn, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && isLoggedIn) navigate('/dashboard', { replace: true });
+  }, [isLoggedIn, loading, navigate]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -46,7 +53,7 @@ function SignupPage() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:7104/api/register", {
+      const res = await fetch(`${BASE_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -44,7 +44,21 @@
 }
 .wb-nav__logo:hover { opacity: 0.75; }
 
-.wb-nav__spacer { justify-self: end; }
+.wb-nav__logout {
+  justify-self: end;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver-lt);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+.wb-nav__logout:hover { color: var(--white); }
 
 /* ════════════════════════════════════════
    MAIN

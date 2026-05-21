@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import './DashboardPage.css'
 
 export default function DashboardPage() {
+  const { logout } = useAuth()
+
   return (
     <div className="db-page">
 
       {/* Nav */}
       <header className="db-nav">
+        <div className="db-nav__spacer" />
         <Link to="/" className="db-nav__logo">Two Cents</Link>
+        <button onClick={logout} className="db-nav__logout">Logout</button>
       </header>
 
       {/* Body */}

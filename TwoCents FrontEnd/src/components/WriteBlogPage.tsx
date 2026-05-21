@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { BASE_URL } from '../config'
+import { useAuth } from '../context/AuthContext'
+import { fetchWithAuth } from '../utils/fetchWithAuth'
 import './WriteBlogPage.css'
 
 export default function WriteBlogPage() {
   const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const [formData, setFormData] = useState({ title: '', body: '' })
   const [error, setError] = useState('')
@@ -24,10 +28,9 @@ export default function WriteBlogPage() {
 
     setIsLoading(true)
     try {
-      const res = await fetch('http://localhost:7104/api/blog/postblog', {
+      const res = await fetchWithAuth(`${BASE_URL}/api/blog/postblog`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ Title: formData.title, Body: formData.body }),
       })
 
@@ -51,7 +54,7 @@ export default function WriteBlogPage() {
       <header className="wb-nav">
         <Link to="/dashboard" className="wb-nav__back">← Dashboard</Link>
         <Link to="/" className="wb-nav__logo">Two Cents</Link>
-        <div className="wb-nav__spacer" />
+        <button onClick={logout} className="wb-nav__logout">Logout</button>
       </header>
 
       {/* Editor */}

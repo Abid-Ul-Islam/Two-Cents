@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import './PublishSuccessPage.css'
 
 export default function PublishSuccessPage() {
   const { state } = useLocation()
   const navigate = useNavigate()
+  const { logout } = useAuth()
 
   useEffect(() => {
     if (!state?.fromPublish) {
@@ -19,7 +21,9 @@ export default function PublishSuccessPage() {
 
       {/* Nav */}
       <header className="ps-nav">
+        <div className="ps-nav__spacer" />
         <Link to="/" className="ps-nav__logo">Two Cents</Link>
+        <button onClick={logout} className="ps-nav__logout">Logout</button>
       </header>
 
       {/* Confirmation */}

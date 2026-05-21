@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { BASE_URL } from '../config';
+import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
 
 const PANEL_TEASERS = [
@@ -10,6 +12,11 @@ const PANEL_TEASERS = [
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { isLoggedIn, loading, refreshUser } = useAuth();
+
+  useEffect(() => {
+    if (!loading && isLoggedIn) navigate('/dashboard', { replace: true });
+  }, [isLoggedIn, loading, navigate]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -38,7 +45,7 @@ export default function LoginPage() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:7104/api/login", {
+      const res = await fetch(`${BASE_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -46,6 +53,7 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
+        await refreshUser();
         navigate("/dashboard");
       } else {
         const data = await res.json();
