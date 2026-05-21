@@ -32,6 +32,7 @@ public class BlogController : ControllerBase
             Title = request.Title,
             Body = request.Body,
             AuthorId = userId,
+            CreatedAt = DateTime.UtcNow,
         };
 
         await _context.Blogs.AddAsync(blog);
