@@ -1,0 +1,190 @@
+/* ════════════════════════════════════════
+   PAGE
+════════════════════════════════════════ */
+.wb-page {
+  min-height: 100vh;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ════════════════════════════════════════
+   NAV
+════════════════════════════════════════ */
+.wb-nav {
+  background: var(--ink);
+  padding: 16px 48px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.wb-nav__back {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver-lt);
+  text-decoration: none;
+  transition: color 0.2s;
+  justify-self: start;
+}
+.wb-nav__back:hover { color: var(--white); }
+
+.wb-nav__logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  transition: opacity 0.2s;
+}
+.wb-nav__logo:hover { opacity: 0.75; }
+
+.wb-nav__spacer { justify-self: end; }
+
+/* ════════════════════════════════════════
+   MAIN
+════════════════════════════════════════ */
+.wb-main {
+  flex: 1;
+  padding: 64px 48px;
+  max-width: 780px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.wb-section-label {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--silver-dk);
+  margin-bottom: 40px;
+}
+
+/* ════════════════════════════════════════
+   FORM
+════════════════════════════════════════ */
+.wb-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.wb-title-input {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 24px;
+}
+.wb-title-input::placeholder { color: var(--border-dk); }
+
+.wb-divider {
+  height: 2px;
+  background: var(--ink);
+  margin-bottom: 32px;
+}
+
+.wb-body-input {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--ink);
+  line-height: 1.8;
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  min-height: 420px;
+  resize: vertical;
+  padding: 0;
+}
+.wb-body-input::placeholder {
+  color: var(--border-dk);
+  font-style: italic;
+}
+
+/* ════════════════════════════════════════
+   ACTIONS
+════════════════════════════════════════ */
+.wb-actions {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.wb-submit {
+  padding: 13px 36px;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.wb-submit:hover:not(:disabled) {
+  background: var(--ink-mid);
+  transform: translateY(-1px);
+}
+.wb-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: btn-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes btn-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 0.4; }
+}
+
+.wb-cancel {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver-dk);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.wb-cancel:hover { color: var(--ink); }
+
+/* ════════════════════════════════════════
+   ERROR
+════════════════════════════════════════ */
+.wb-error {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  color: #9b2226;
+  background: #fff0f0;
+  border: 1px solid #f0c0c0;
+  padding: 10px 14px;
+  margin-bottom: 32px;
+  letter-spacing: 0.02em;
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .wb-nav  { padding: 14px 24px; }
+  .wb-main { padding: 40px 24px; }
+}
