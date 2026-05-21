@@ -16,7 +16,8 @@ builder.Services.AddCors(options =>
             policy
                 .WithOrigins("http://localhost:5173")
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
@@ -46,6 +47,14 @@ builder.Services
             ClockSkew = TimeSpan.Zero
         };
 
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["AccessToken"];
+                return Task.CompletedTask;
+            }
+        };
     });
 
 WebApplication app = builder.Build();
