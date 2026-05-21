@@ -8,28 +8,6 @@ const PANEL_TEASERS = [
   { id: 3, category: 'Science', title: 'Certainty Is the Enemy of Inquiry' },
 ]
 
-async function getApiResponse(name, email, gender, password) {
-  try {
-    const res = await fetch("http://localhost:7104/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Name: name,
-        Email: email,
-        Gender: gender,
-        Password: password,
-      }),
-    });
-
-    const data = await res.json();
-    return data;
-
-  } catch (err) {
-    console.error("Error:", err);
-  }
-}
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -43,6 +21,7 @@ function SignupPage() {
   });
 
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -65,22 +44,29 @@ function SignupPage() {
       return;
     }
 
+    setIsLoading(true);
     try {
-      const data = await getApiResponse(
-        formData.name,
-        formData.email,
-        formData.gender,
-        formData.password
-      );
+      const res = await fetch("http://localhost:7104/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          Name: formData.name,
+          Email: formData.email,
+          Gender: formData.gender,
+          Password: formData.password,
+        }),
+      });
 
-      console.log("API response:", data);
-
-      // navigate ONLY after success
-      navigate("/login");
-
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong");
+      if (res.ok) {
+        navigate("/login");
+      } else {
+        const data = await res.json();
+        setError(data.message ?? "Something went wrong");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -200,8 +186,8 @@ function SignupPage() {
                 />
               </div>
 
-              <button type="submit" className="sp-submit">
-                Sign Up
+              <button type="submit" className="sp-submit" disabled={isLoading}>
+                {isLoading ? "Creating account…" : "Sign Up"}
               </button>
             </form>
 

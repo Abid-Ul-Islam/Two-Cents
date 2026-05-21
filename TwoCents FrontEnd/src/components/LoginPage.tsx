@@ -17,6 +17,7 @@ export default function LoginPage() {
   });
 
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -35,17 +36,25 @@ export default function LoginPage() {
     }
 
 
+    setIsLoading(true);
+    try {
       const res = await fetch("http://localhost:7104/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ Email: formData.email, Password: formData.password }),
       });
 
-      if (res.ok)
-      {
-        navigate("/dashboard")
+      if (res.ok) {
+        navigate("/dashboard");
+      } else {
+        const data = await res.json();
+        setError(data.message ?? "Something went wrong");
       }
-    
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -127,9 +136,8 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* TODO: On click this calls handleSubmit → see the API call comment above */}
-              <button type="submit" className="lp-submit">
-                Login
+              <button type="submit" className="lp-submit" disabled={isLoading}>
+                {isLoading ? "Logging in…" : "Login"}
               </button>
             </form>
 
