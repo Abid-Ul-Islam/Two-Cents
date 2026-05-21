@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using TwoCents_WebApi.DbContext;
 using TwoCents_WebApi.Entities;
 using TwoCents_WebApi.Helpers;
-using TwoCents_WebApi.Models;
 
 namespace TwoCents_WebApi.Controllers;
 
@@ -21,20 +20,20 @@ public class RefreshController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetRefreshToken (LoginRequest req)
+    public async Task<IActionResult> GetRefreshToken ()
     {
         string? incomingToken = Request.Cookies[RefreshToken];
 
         RefreshToken? matchedToken = await _context.RefreshTokens
-        .FirstOrDefaultAsync(rt => string.Equals(rt.Token, incomingToken));
-
-        User? user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == req.Email);
+            .Include(rt => rt.User)
+            .FirstOrDefaultAsync(rt => string.Equals(rt.Token, incomingToken));
 
         if (matchedToken is null)
         {
             return Unauthorized();
         }
+
+        User user = matchedToken.User;
 
         _context.RefreshTokens.Remove(matchedToken);
         await _context.SaveChangesAsync();
