@@ -27,31 +27,49 @@
   flex-shrink: 0;
 }
 
-.strip-link {
+.strip-link,
+.strip-btn {
+  position: relative;
   font-family: var(--font-ui);
   font-size: 0.88rem;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--silver-lt);
   text-decoration: none;
+  background: none;
+  padding: 0;
   transition: color 0.2s;
 }
-.strip-link:hover { color: var(--white); }
+
+.strip-link,
+.strip-btn {
+  color: var(--silver-lt);
+}
 
 .strip-btn {
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
+  color: var(--white);
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink);
-  background: var(--silver-lt);
-  padding: 8px 22px;
-  text-decoration: none;
-  transition: background 0.2s;
 }
-.strip-btn:hover { background: var(--white); }
+
+.strip-link::after,
+.strip-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--white);
+  transition: width 0.25s ease;
+}
+
+.strip-link:hover { color: var(--white); }
+.strip-btn:hover  { color: var(--white); }
+
+.strip-link:hover::after,
+.strip-btn:hover::after {
+  width: 100%;
+}
 
 /* ── Masthead ── */
 .hero__masthead {
