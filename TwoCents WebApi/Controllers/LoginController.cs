@@ -33,7 +33,7 @@ public class LoginController : ControllerBase
 
         if (!passwordVerified)
         {
-            return Unauthorized("The given username or password does not match");
+            return Unauthorized(new { message = "The given username or password does not match" });
         }
 
         RefreshToken refreshToken = TokenHelper.GenerateRefreshTokenForCurrentUser(user);

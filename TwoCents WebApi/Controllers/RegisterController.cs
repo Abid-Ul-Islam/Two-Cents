@@ -24,7 +24,7 @@ public class RegisterController : ControllerBase
     {
         if (!UserInfoValidator.ValidateUserInfo(registerRequest))
         {
-            return BadRequest("Invalid user information. Please check the provided data and try again.");
+            return BadRequest(new { message = "Invalid user information. Please check the provided data and try again." });
         }
 
         bool duplicateEmail = await _context.Users
@@ -32,7 +32,7 @@ public class RegisterController : ControllerBase
 
         if (duplicateEmail)
         {
-            return Conflict("Provided email is already registered");
+            return Conflict(new { message = "Provided email is already registered" });
         }
 
         User user = new()
@@ -49,7 +49,7 @@ public class RegisterController : ControllerBase
 
         return Ok(new
         {
-         message = "Registration Successful"   
+            message = "Registration Successful"
         });
     }
 }
