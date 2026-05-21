@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TwoCents_WebApi.DbContext;
 using TwoCents_WebApi.Entities;
@@ -22,7 +23,7 @@ public class LogoutController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Logout ()
     {
-        string? email = User.Identity.Name;
+        string? email = User.FindFirst(ClaimTypes.Email)?.Value;
 
         RefreshToken? refreshToken = _context.RefreshTokens.FirstOrDefault(rt => rt.User.Email == email);
         if (refreshToken != null)
