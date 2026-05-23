@@ -1,0 +1,144 @@
+/* ════════════════════════════════════════
+   PAGE
+════════════════════════════════════════ */
+.bd-page {
+  min-height: 100vh;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ════════════════════════════════════════
+   NAV
+════════════════════════════════════════ */
+.bd-nav {
+  background: var(--ink);
+  padding: 16px 48px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.bd-nav__back {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver-lt);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  justify-self: start;
+  transition: color 0.2s;
+}
+.bd-nav__back:hover { color: var(--white); }
+
+.bd-nav__logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  transition: opacity 0.2s;
+}
+.bd-nav__logo:hover { opacity: 0.75; }
+
+.bd-nav__logout {
+  justify-self: end;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver-lt);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+.bd-nav__logout:hover { color: var(--white); }
+
+/* ════════════════════════════════════════
+   MAIN
+════════════════════════════════════════ */
+.bd-main {
+  flex: 1;
+  padding: 80px 48px 96px;
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fade-up 0.6s ease both;
+}
+
+/* ════════════════════════════════════════
+   ARTICLE
+════════════════════════════════════════ */
+.bd-kicker {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--silver-dk);
+  margin-bottom: 32px;
+}
+
+.bd-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 28px;
+  word-break: break-word;
+}
+
+.bd-divider {
+  height: 2px;
+  background: var(--ink);
+  margin-bottom: 36px;
+}
+
+.bd-body {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--ink);
+  line-height: 1.8;
+}
+
+.bd-body p {
+  margin-bottom: 24px;
+}
+.bd-body p:last-child { margin-bottom: 0; }
+
+/* ════════════════════════════════════════
+   STATES
+════════════════════════════════════════ */
+.bd-state {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--silver-dk);
+  text-align: center;
+  padding: 64px 0;
+}
+
+.bd-state--error {
+  color: #9b2226;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .bd-nav  { padding: 14px 24px; }
+  .bd-main { padding: 56px 24px 64px; }
+}

@@ -8,6 +8,8 @@ import SignupPage from './components/SignupPage.tsx'
 import DashboardPage from './components/DashboardPage.tsx'
 import WriteBlogPage from './components/WriteBlogPage.tsx'
 import PublishSuccessPage from './components/PublishSuccessPage.tsx'
+import ProfilePage from './components/ProfilePage.tsx'
+import BlogDetailPage from './components/BlogDetailPage.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/write" element={<ProtectedRoute><WriteBlogPage /></ProtectedRoute>} />
           <Route path="/write/success" element={<ProtectedRoute><PublishSuccessPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/blog/:id" element={<ProtectedRoute><BlogDetailPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

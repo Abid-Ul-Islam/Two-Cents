@@ -28,6 +28,15 @@ export default function DashboardPage() {
             </p>
             <span className="db-card__cta">Start Writing →</span>
           </Link>
+
+          <Link to="/profile" className="db-card">
+            <span className="db-card__kicker">◆ Account</span>
+            <h2 className="db-card__title">My Profile</h2>
+            <p className="db-card__body">
+              Review your account details and identity.
+            </p>
+            <span className="db-card__cta">View Profile →</span>
+          </Link>
         </div>
       </main>
 
