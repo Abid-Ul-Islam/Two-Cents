@@ -51,7 +51,7 @@ public class LoginController : ControllerBase
                 Secure = true,
                 SameSite = SameSiteMode.None,
                 Expires = refreshToken.ExpiresAt,
-                Path = "api/refresh"
+                Path = "/api/refresh"
             }
         );
 
