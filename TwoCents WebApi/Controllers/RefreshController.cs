@@ -26,7 +26,7 @@ public class RefreshController : ControllerBase
 
         RefreshToken? matchedToken = await _context.RefreshTokens
             .Include(rt => rt.User)
-            .FirstOrDefaultAsync(rt => string.Equals(rt.Token, incomingToken));
+            .FirstOrDefaultAsync(rt => string.Equals(rt.Token, incomingToken) && rt.ExpiresAt > DateTime.UtcNow);
 
         if (matchedToken is null)
         {
@@ -51,7 +51,8 @@ public class RefreshController : ControllerBase
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = refreshToken.ExpiresAt
+                Expires = refreshToken.ExpiresAt,
+                Path = "/api/refresh"
             }
         );
 

@@ -1,7 +1,7 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TwoCents_WebApi.DbContext;
 using TwoCents_WebApi.Entities;
 
@@ -26,25 +26,32 @@ public class LogoutController : ControllerBase
     {
         string? email = User.FindFirst(ClaimTypes.Email)?.Value;
 
-        RefreshToken? refreshToken = await _context.RefreshTokens
+        List<RefreshToken> tokens = await _context.RefreshTokens
             .Include(rt => rt.User)
-            .FirstOrDefaultAsync(rt => rt.User.Email == email);
+            .Where(rt => rt.User.Email == email)
+            .ToListAsync();
 
-        if (refreshToken != null)
+        if (tokens.Count > 0)
         {
-            _context.RefreshTokens.Remove(refreshToken);
+            _context.RefreshTokens.RemoveRange(tokens);
             await _context.SaveChangesAsync();
         }
 
-        var cookieOptions = new CookieOptions
+        Response.Cookies.Delete("AccessToken", new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
-        };
+            Path = "/"
+        });
 
-        Response.Cookies.Delete("AccessToken", cookieOptions);
-        Response.Cookies.Delete("RefreshToken", cookieOptions);
+        Response.Cookies.Delete("RefreshToken", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Path = "/api/refresh"
+        });
 
         return Ok("Logged out");
     }
