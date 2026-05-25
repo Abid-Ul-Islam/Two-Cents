@@ -21,10 +21,13 @@ public class BlogController : ControllerBase
         _context = context;
     }
 
-    [HttpPost("postblog")]
+    [HttpPost]
     public async Task<IActionResult> PostBlog (PostBlogRequest request)
     {
         string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId is null)
+            return BadRequest();
 
         Blog blog = new()
         {
@@ -41,7 +44,7 @@ public class BlogController : ControllerBase
         return Created();
     }
 
-    [HttpGet("getblog/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetBlog (string id)
     {
         Blog? blog = await _context.Blogs.FindAsync(id);
@@ -55,10 +58,15 @@ public class BlogController : ControllerBase
     }
 
 
-    [HttpGet("getblogs")]
-    public async Task<IActionResult> GetBlogs ()
+    [HttpGet]
+    public async Task<IActionResult> GetBlogs (string? authorId)
     {
-        List<Blog> blogs = await _context.Blogs.ToListAsync();
+        var query = _context.Blogs.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(authorId))
+            query = query.Where(b => b.AuthorId == authorId);
+
+        List<Blog> blogs = await query.ToListAsync();
 
         return Ok(blogs);
     }
