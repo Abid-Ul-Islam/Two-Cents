@@ -1,9 +1,15 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useState, useEffect } from 'react'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { fetchWithAuth } from '../utils/fetchWithAuth'
 import { BASE_URL } from '../config'
 import './ProfilePage.css'
+
+interface UserProfile {
+  id: string
+  name: string
+  email: string
+  gender?: string
+}
 
 interface Blog {
   id: string
@@ -11,49 +17,69 @@ interface Blog {
   body: string
 }
 
-export default function ProfilePage() {
-  const { user, logout } = useAuth()
+export default function UserProfilePage() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [blogs, setBlogs] = useState<Blog[]>([])
-  const [blogsLoading, setBlogsLoading] = useState(true)
-  const [blogsError, setBlogsError] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!user) return
+    if (!id) return
     let cancelled = false
 
     ;(async () => {
       try {
-        const res = await fetchWithAuth(`${BASE_URL}/api/blog?authorId=${user.id}`)
-        if (!res.ok) {
-          if (!cancelled) setBlogsError('Could not load your essays.')
+        const [userRes, blogsRes] = await Promise.all([
+          fetchWithAuth(`${BASE_URL}/api/user/${id}`),
+          fetchWithAuth(`${BASE_URL}/api/blog?authorId=${id}`),
+        ])
+
+        if (!userRes.ok) {
+          if (!cancelled) setError('Writer not found.')
           return
         }
-        const data: Blog[] = await res.json()
-        if (!cancelled) setBlogs(data)
+
+        const userData: UserProfile = await userRes.json()
+        const allBlogs: Blog[] = blogsRes.ok ? await blogsRes.json() : []
+
+        if (!cancelled) {
+          setProfile(userData)
+          setBlogs(allBlogs)
+        }
       } catch {
-        if (!cancelled) setBlogsError('Could not reach the server.')
+        if (!cancelled) setError('Could not reach the server.')
       } finally {
-        if (!cancelled) setBlogsLoading(false)
+        if (!cancelled) setLoading(false)
       }
     })()
 
     return () => { cancelled = true }
-  }, [user])
+  }, [id])
 
-  if (!user) return null
+  if (loading) return null
+
+  if (error || !profile) {
+    return (
+      <div style={{ padding: 64, fontFamily: 'var(--font-ui)', color: 'var(--ink)' }}>
+        {error || 'Writer not found.'}
+      </div>
+    )
+  }
 
   return (
     <div className="pf-page">
       <div className="pf-body">
 
-        {/* ── Left: Identity Panel ── */}
+        {/* Left: Identity Panel */}
         <aside className="pf-panel">
-          <Link to="/dashboard" className="pf-panel__home">← Dashboard</Link>
+          <button className="pf-panel__home" onClick={() => navigate(-1)}>&larr; Back</button>
 
           <div className="pf-panel__top">
             <div className="pf-panel__ornament">
               <span className="pf-panel__ornament-line" />
-              <span className="pf-panel__ornament-diamond">◆</span>
+              <span className="pf-panel__ornament-diamond">&#9670;</span>
               <span className="pf-panel__ornament-line" />
             </div>
             <Link to="/" className="pf-panel__logo">Two Cents</Link>
@@ -61,18 +87,18 @@ export default function ProfilePage() {
           </div>
 
           <div className="pf-panel__identity">
-            <p className="pf-panel__kicker">Your Profile</p>
-            <h1 className="pf-panel__name">{user.name}</h1>
+            <p className="pf-panel__kicker">Writer Profile</p>
+            <h1 className="pf-panel__name">{profile.name}</h1>
 
             <dl className="pf-panel__fields">
               <div className="pf-panel__field">
                 <dt>Email</dt>
-                <dd>{user.email}</dd>
+                <dd>{profile.email}</dd>
               </div>
-              {user.gender && (
+              {profile.gender && (
                 <div className="pf-panel__field">
                   <dt>Gender</dt>
-                  <dd>{user.gender}</dd>
+                  <dd>{profile.gender}</dd>
                 </div>
               )}
             </dl>
@@ -81,33 +107,21 @@ export default function ProfilePage() {
           <p className="pf-panel__byline">A writer at Two Cents.</p>
         </aside>
 
-        {/* ── Right: Essays ── */}
+        {/* Right: Essays */}
         <section className="pf-essays-side">
-          <button onClick={logout} className="pf-essays-side__logout">Logout</button>
-
           <div className="pf-essays-side__inner">
             <div className="pf-essays__heading">
-              <span className="pf-essays__heading-label">Your Essays</span>
-              {!blogsLoading && !blogsError && (
-                <span className="pf-essays__heading-count">
-                  {String(blogs.length).padStart(2, '0')}
-                </span>
-              )}
+              <span className="pf-essays__heading-label">Essays</span>
+              <span className="pf-essays__heading-count">
+                {String(blogs.length).padStart(2, '0')}
+              </span>
             </div>
 
-            {blogsLoading && (
-              <p className="pf-essays__state">Gathering your words…</p>
+            {blogs.length === 0 && (
+              <p className="pf-essays__state">No essays published yet.</p>
             )}
 
-            {!blogsLoading && blogsError && (
-              <p className="pf-essays__state pf-essays__state--error">{blogsError}</p>
-            )}
-
-            {!blogsLoading && !blogsError && blogs.length === 0 && (
-              <p className="pf-essays__state">No essays yet. The page is waiting.</p>
-            )}
-
-            {!blogsLoading && !blogsError && blogs.length > 0 && (
+            {blogs.length > 0 && (
               <ol className="pf-essay-list">
                 {blogs.map((b, idx) => (
                   <li key={b.id} className="pf-essay">
@@ -118,7 +132,7 @@ export default function ProfilePage() {
                       <div className="pf-essay__content">
                         <h3 className="pf-essay__title">{b.title}</h3>
                         <p className="pf-essay__excerpt">{b.body}</p>
-                        <span className="pf-essay__cta">Read essay →</span>
+                        <span className="pf-essay__cta">Read essay &rarr;</span>
                       </div>
                     </Link>
                   </li>

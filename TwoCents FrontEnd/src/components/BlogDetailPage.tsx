@@ -26,7 +26,7 @@ export default function BlogDetailPage() {
 
     ;(async () => {
       try {
-        const res = await fetchWithAuth(`${BASE_URL}/api/blog/getblog/${id}`)
+        const res = await fetchWithAuth(`${BASE_URL}/api/blog/${id}`)
         if (!res.ok) {
           if (!cancelled) setError('Essay not found.')
           return

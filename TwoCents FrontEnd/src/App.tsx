@@ -10,6 +10,8 @@ import WriteBlogPage from './components/WriteBlogPage.tsx'
 import PublishSuccessPage from './components/PublishSuccessPage.tsx'
 import ProfilePage from './components/ProfilePage.tsx'
 import BlogDetailPage from './components/BlogDetailPage.tsx'
+import SearchResultsPage from './components/SearchResultsPage.tsx'
+import UserProfilePage from './components/UserProfilePage.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
           <Route path="/write/success" element={<ProtectedRoute><PublishSuccessPage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/blog/:id" element={<ProtectedRoute><BlogDetailPage /></ProtectedRoute>} />
+          <Route path="/search" element={<ProtectedRoute><SearchResultsPage /></ProtectedRoute>} />
+          <Route path="/user/:id" element={<ProtectedRoute><UserProfilePage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

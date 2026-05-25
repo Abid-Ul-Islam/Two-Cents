@@ -28,7 +28,7 @@ export default function WriteBlogPage() {
 
     setIsLoading(true)
     try {
-      const res = await fetchWithAuth(`${BASE_URL}/api/blog/postblog`, {
+      const res = await fetchWithAuth(`${BASE_URL}/api/blog`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ Title: formData.title, Body: formData.body }),
