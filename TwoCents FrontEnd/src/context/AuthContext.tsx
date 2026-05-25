@@ -23,7 +23,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const refreshUser = async () => {
-    const res = await fetch(`${BASE_URL}/api/me`, { credentials: 'include' })
+    let res = await fetch(`${BASE_URL}/api/me`, { credentials: 'include' })
+    if (res.status === 401) {
+      const refreshed = await fetch(`${BASE_URL}/api/refresh`, { method: 'POST', credentials: 'include' })
+      if (refreshed.ok) {
+        res = await fetch(`${BASE_URL}/api/me`, { credentials: 'include' })
+      }
+    }
     setUser(res.ok ? await res.json() : null)
   }
 
