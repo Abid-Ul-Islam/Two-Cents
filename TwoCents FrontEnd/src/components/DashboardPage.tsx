@@ -1,18 +1,59 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { fetchWithAuth } from '../utils/fetchWithAuth'
+import { BASE_URL } from '../config'
 import './DashboardPage.css'
+
+interface Tag {
+  id: number
+  name: string
+  slug: string
+}
 
 export default function DashboardPage() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
+  const [selectedTags, setSelectedTags] = useState<number[]>([])
+  const [showTagSelector, setShowTagSelector] = useState(false)
+  const [availableTags, setAvailableTags] = useState<Tag[]>([])
+  const [tagsLoading, setTagsLoading] = useState(true)
+
+  useEffect(() => {
+    fetchWithAuth(`${BASE_URL}/api/tags`)
+      .then(res => (res.ok ? res.json() : []))
+      .then((data: Tag[]) => setAvailableTags(data))
+      .finally(() => setTagsLoading(false))
+  }, [])
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault()
     if (!query.trim()) return
     navigate(`/search?q=${encodeURIComponent(query.trim())}`)
   }
+
+  function toggleTag(tagId: number) {
+    setSelectedTags(prev => {
+      if (prev.includes(tagId)) {
+        return prev.filter(id => id !== tagId)
+      } else if (prev.length < 6) {
+        return [...prev, tagId]
+      }
+      return prev
+    })
+  }
+
+  function handleTagSearch(e: React.FormEvent) {
+    e.preventDefault()
+    if (selectedTags.length === 0) return
+    const tagParams = selectedTags.join(',')
+    navigate(`/search/tags?tags=${tagParams}`)
+  }
+
+  const selectedTagNames = availableTags
+    .filter(tag => selectedTags.includes(tag.id))
+    .map(tag => tag.name)
 
   return (
     <div className="db-page">
@@ -63,6 +104,68 @@ export default function DashboardPage() {
               />
               <button className="db-search__btn" type="submit">Search</button>
             </form>
+          </section>
+
+          <section className="db-search">
+            <div className="db-search__heading">
+              <span className="db-search__label">Find Blogs by Topic</span>
+            </div>
+            <button
+              className="db-tag-selector-btn"
+              onClick={() => setShowTagSelector(!showTagSelector)}
+              type="button"
+            >
+              {selectedTags.length === 0
+                ? 'Select Topics (up to 6)'
+                : `${selectedTags.length} topic${selectedTags.length !== 1 ? 's' : ''} selected`}
+            </button>
+
+            {showTagSelector && (
+              <div className="db-tag-selector">
+                {tagsLoading ? (
+                  <p className="db-tag-selector__loading">Loading topics...</p>
+                ) : (
+                  <div className="db-tag-selector__grid">
+                    {availableTags.map(tag => (
+                      <button
+                        key={tag.id}
+                        className={`db-tag ${selectedTags.includes(tag.id) ? 'db-tag--selected' : ''}`}
+                        onClick={() => toggleTag(tag.id)}
+                        type="button"
+                      >
+                        {tag.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedTags.length > 0 && (
+              <div className="db-selected-tags">
+                {selectedTagNames.map(tagName => (
+                  <span key={tagName} className="db-selected-tag">
+                    {tagName}
+                    <button
+                      className="db-selected-tag__remove"
+                      onClick={() => {
+                        const tagId = availableTags.find(t => t.name === tagName)?.id
+                        if (tagId) toggleTag(tagId)
+                      }}
+                      type="button"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {selectedTags.length > 0 && (
+              <form className="db-search__form" onSubmit={handleTagSearch}>
+                <button className="db-search__btn" type="submit">Search by Topics</button>
+              </form>
+            )}
           </section>
 
           <section className="db-actions">
