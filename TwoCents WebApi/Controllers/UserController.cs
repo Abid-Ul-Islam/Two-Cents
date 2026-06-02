@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TwoCents_WebApi.DbContext;
@@ -5,6 +6,8 @@ using TwoCents_WebApi.DbContext;
 namespace TwoCents_WebApi.Controllers;
 
 [ApiController]
+[Authorize]
+
 [Route("api/[Controller]")]
 public class UserController : ControllerBase
 {
