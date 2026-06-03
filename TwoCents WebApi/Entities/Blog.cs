@@ -14,4 +14,6 @@ public class Blog
     public DateTime CreatedAt { get; set; }
 
     public User User { get; set; }
+
+    public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }
