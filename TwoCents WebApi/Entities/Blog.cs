@@ -8,12 +8,17 @@ public class Blog
     public string Id { get; set; }
     public string Title { get; set; }
     public string AuthorId { get; set; }
+    
+    public string AuthorName { get; set; }
 
     public string Body { get; set; }
+    
+    public long UpvoteCount { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
     public User User { get; set; }
-
     public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+    
+    public ICollection<Upvote>Upvotes  { get; set; } = new List<Upvote>();
 }
