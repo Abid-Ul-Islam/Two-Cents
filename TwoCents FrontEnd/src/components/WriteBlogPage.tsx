@@ -21,6 +21,7 @@ export default function WriteBlogPage() {
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([])
   const [availableTags, setAvailableTags] = useState<Tag[]>([])
   const [tagsLoading, setTagsLoading] = useState(true)
+  const [tagLimitError, setTagLimitError] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isFetching, setIsFetching] = useState(isEditing)
@@ -72,9 +73,18 @@ export default function WriteBlogPage() {
   }, [id])
 
   function toggleTag(tagId: number) {
-    setSelectedTagIds(prev =>
-      prev.includes(tagId) ? prev.filter(t => t !== tagId) : [...prev, tagId]
-    )
+    setSelectedTagIds(prev => {
+      if (prev.includes(tagId)) {
+        setTagLimitError(false)
+        return prev.filter(t => t !== tagId)
+      }
+      if (prev.length >= 6) {
+        setTagLimitError(true)
+        return prev
+      }
+      setTagLimitError(false)
+      return [...prev, tagId]
+    })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -184,6 +194,9 @@ export default function WriteBlogPage() {
           {/* Tag selector */}
           <div className="wb-tags">
             <span className="wb-tags__label">◆ Topics</span>
+            {tagLimitError && (
+              <p className="wb-tags__limit-error">You can only select up to 6 topics.</p>
+            )}
             {tagsLoading ? (
               <p className="wb-tags__loading">Loading topics…</p>
             ) : (

@@ -310,23 +310,27 @@
   transition: letter-spacing 0.2s;
 }
 
-.pf-essay__footer {
-  padding: 0 8px 16px calc(48px + 18px);
+.pf-essay__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.pf-essay__edit {
+.pf-essay__upvotes {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
   font-family: var(--font-ui);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--silver-dk);
-  text-decoration: none;
-  transition: color 0.2s, letter-spacing 0.2s;
 }
-.pf-essay__edit:hover {
-  color: var(--ink);
-  letter-spacing: 0.14em;
+
+.pf-essay__upvote-icon {
+  width: 14px;
+  height: 14px;
 }
 
 /* ════════════════════════════════════════

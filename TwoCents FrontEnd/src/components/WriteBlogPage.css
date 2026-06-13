@@ -175,6 +175,13 @@
   margin: 0;
 }
 
+.wb-tags__limit-error {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: #9b2226;
+  margin: 0 0 8px;
+}
+
 .wb-tags__grid {
   display: flex;
   flex-wrap: wrap;

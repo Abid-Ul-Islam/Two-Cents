@@ -135,6 +135,29 @@
 
 .bd-meta__sep { color: var(--border-dk); }
 
+.bd-upvote {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--silver-dk);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+.bd-upvote:hover { color: var(--ink); }
+.bd-upvote--active { color: #2a9d4e; }
+
+.bd-upvote__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 .bd-tags {
   display: flex;
   flex-wrap: wrap;

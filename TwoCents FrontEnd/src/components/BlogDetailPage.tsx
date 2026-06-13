@@ -18,6 +18,8 @@ interface Blog {
   authorId: string
   authorName: string
   createdAt: string
+  upvoteCount: number
+  isUpvotedByCurrentUser: boolean
   tags: Tag[]
 }
 
@@ -28,6 +30,24 @@ export default function BlogDetailPage() {
   const [blog, setBlog] = useState<Blog | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [upvoted, setUpvoted] = useState(false)
+  const [upvoteCount, setUpvoteCount] = useState(0)
+
+  async function toggleUpvote() {
+    const wasUpvoted = upvoted
+    setUpvoted(!wasUpvoted)
+    setUpvoteCount(prev => wasUpvoted ? prev - 1 : prev + 1)
+
+    try {
+      const res = await fetchWithAuth(`${BASE_URL}/api/blog/${id}/vote`, {
+        method: wasUpvoted ? 'DELETE' : 'POST',
+      })
+      if (!res.ok) throw new Error()
+    } catch {
+      setUpvoted(wasUpvoted)
+      setUpvoteCount(prev => wasUpvoted ? prev + 1 : prev - 1)
+    }
+  }
 
   useEffect(() => {
     if (!id) return
@@ -41,7 +61,11 @@ export default function BlogDetailPage() {
           return
         }
         const data: Blog = await res.json()
-        if (!cancelled) setBlog(data)
+        if (!cancelled) {
+          setBlog(data)
+          setUpvoted(data.isUpvotedByCurrentUser)
+          setUpvoteCount(data.upvoteCount)
+        }
       } catch {
         if (!cancelled) setError('Could not reach the server.')
       } finally {
@@ -86,6 +110,16 @@ export default function BlogDetailPage() {
               <span className="bd-meta__author">{blog.authorName}</span>
               <span className="bd-meta__sep">·</span>
               <span className="bd-meta__date">{new Date(blog.createdAt).toLocaleDateString()}</span>
+              <span className="bd-meta__sep">·</span>
+              <button
+                onClick={toggleUpvote}
+                className={`bd-upvote${upvoted ? ' bd-upvote--active' : ''}`}
+              >
+                <svg className="bd-upvote__icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L3 13h5v9h8v-9h5L12 2z" />
+                </svg>
+                {upvoteCount}
+              </button>
             </div>
             {blog.tags.length > 0 && (
               <div className="bd-tags">

@@ -8,10 +8,12 @@ interface BlogResult {
   id: string
   title: string
   body: string
-  tags: Array<{ id: number; name: string; slug: string }>
   authorId: string
   authorName: string
   createdAt: string
+  upvoteCount: number
+  isUpvotedByCurrentUser: boolean
+  tags: Array<{ id: number; name: string; slug: string }>
 }
 
 interface Tag {

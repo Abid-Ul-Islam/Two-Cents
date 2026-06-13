@@ -12,6 +12,8 @@ interface Blog {
   authorId: string
   authorName: string
   createdAt: string
+  upvoteCount: number
+  isUpvotedByCurrentUser: boolean
   tags: Array<{ id: number; name: string; slug: string }>
 }
 
@@ -120,14 +122,19 @@ export default function ProfilePage() {
                         {String(idx + 1).padStart(2, '0')}
                       </span>
                       <div className="pf-essay__content">
-                        <h3 className="pf-essay__title">{b.title}</h3>
+                        <div className="pf-essay__title-row">
+                          <h3 className="pf-essay__title">{b.title}</h3>
+                          <span className="pf-essay__upvotes">
+                            <svg viewBox="0 0 24 24" fill="currentColor" className="pf-essay__upvote-icon">
+                              <path d="M12 2L3 13h5v9h8v-9h5L12 2z" />
+                            </svg>
+                            {b.upvoteCount}
+                          </span>
+                        </div>
                         <p className="pf-essay__excerpt">{b.body}</p>
                         <span className="pf-essay__cta">Read essay →</span>
                       </div>
                     </Link>
-                    <div className="pf-essay__footer">
-                      <Link to={`/write/${b.id}`} className="pf-essay__edit">Edit →</Link>
-                    </div>
                   </li>
                 ))}
               </ol>
