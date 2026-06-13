@@ -7,7 +7,7 @@ import './SearchResultsPage.css'
 interface BlogResult {
   id: string
   title: string
-  content: string
+  body: string
   tags: Array<{ id: number; name: string; slug: string }>
   authorId: string
   authorName: string
@@ -36,8 +36,8 @@ export default function TagSearchPage() {
     setLoaded(false)
     setResults([])
 
-    const tagParams = tagIds.join(',')
-    fetchWithAuth(`${BASE_URL}/api/blog?tags=${tagParams}`)
+    const tagQuery = tagIds.map(id => `tags=${id}`).join('&')
+    fetchWithAuth(`${BASE_URL}/api/blog?${tagQuery}`)
       .then(res => (res.ok ? res.json() : []))
       .then((data: BlogResult[]) => setResults(data))
       .finally(() => {
@@ -49,7 +49,7 @@ export default function TagSearchPage() {
   useEffect(() => {
     if (tagIds.length === 0) return
 
-    fetchWithAuth(`${BASE_URL}/api/tag`)
+    fetchWithAuth(`${BASE_URL}/api/tags`)
       .then(res => (res.ok ? res.json() : []))
       .then((data: Tag[]) => {
         const nameMap: { [key: number]: string } = {}
@@ -71,7 +71,7 @@ export default function TagSearchPage() {
       <header className="sr-nav">
         <Link to="/dashboard" className="sr-nav__back">&larr; Dashboard</Link>
         <Link to="/" className="sr-nav__logo">Two Cents</Link>
-        <div className="sr-nav__spacer" />
+        <Link to="/profile" className="sr-nav__profile">Profile</Link>
       </header>
 
       {/* Body */}
@@ -103,7 +103,7 @@ export default function TagSearchPage() {
                 <Link to={`/blog/${blog.id}`} className="sr-result__link">
                   <span className="sr-result__name">{blog.title}</span>
                   <span className="sr-result__email">
-                    By {blog.authorName} • {new Date(blog.createdAt).toLocaleDateString()}
+                    By {blog.authorName} · {new Date(blog.createdAt).toLocaleDateString()}
                   </span>
                 </Link>
               </li>

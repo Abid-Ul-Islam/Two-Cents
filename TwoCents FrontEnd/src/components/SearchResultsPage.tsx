@@ -40,7 +40,7 @@ export default function SearchResultsPage() {
       <header className="sr-nav">
         <Link to="/dashboard" className="sr-nav__back">&larr; Dashboard</Link>
         <Link to="/" className="sr-nav__logo">Two Cents</Link>
-        <div className="sr-nav__spacer" />
+        <Link to="/profile" className="sr-nav__profile">Profile</Link>
       </header>
 
       {/* Body */}

@@ -310,6 +310,25 @@
   transition: letter-spacing 0.2s;
 }
 
+.pf-essay__footer {
+  padding: 0 8px 16px calc(48px + 18px);
+}
+
+.pf-essay__edit {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--silver-dk);
+  text-decoration: none;
+  transition: color 0.2s, letter-spacing 0.2s;
+}
+.pf-essay__edit:hover {
+  color: var(--ink);
+  letter-spacing: 0.14em;
+}
+
 /* ════════════════════════════════════════
    STATES
 ════════════════════════════════════════ */

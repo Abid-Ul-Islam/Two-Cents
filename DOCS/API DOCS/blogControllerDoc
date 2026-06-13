@@ -2,11 +2,11 @@ This is documentation of all the different ways the blog controller will be used
 
 1. A single blog will be accessed through it's id.
 
-GET api/blogs/blogId
+GET api/blogs/{blogId}
 
 2. All the blogs of an user will be accessed through the users corresponding ID
 
-GET api/blogs/{userId}
+GET api/blogs?userId=123
 
 3. Blogs will be posted by users
 
@@ -21,7 +21,7 @@ Request body :
 
 4. An user can update their blog
 
-PUT api/blogs/blogId
+PUT api/blogs/{blogId}
 
 Request body :
 
@@ -32,4 +32,4 @@ Request body :
 
 5. An user can delete their blog
 
-DELETE api/blogs/blogId
+DELETE api/blogs/{blogId}

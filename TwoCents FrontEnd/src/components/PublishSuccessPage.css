@@ -13,7 +13,7 @@
 ════════════════════════════════════════ */
 .ps-nav {
   background: var(--ink);
-  padding: 20px 48px;
+  padding: 10px 48px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -22,8 +22,26 @@
 
 .ps-nav__spacer { justify-self: start; }
 
-.ps-nav__logout {
+.ps-nav__right {
   justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.ps-nav__profile {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver-lt);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.ps-nav__profile:hover { color: var(--white); }
+
+.ps-nav__logout {
   font-family: var(--font-ui);
   font-size: 0.82rem;
   font-weight: 500;

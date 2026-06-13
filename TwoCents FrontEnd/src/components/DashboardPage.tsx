@@ -76,14 +76,9 @@ export default function DashboardPage() {
           <div className="db-panel__identity">
             <p className="db-panel__kicker">Your Workspace</p>
             <h1 className="db-panel__name">{user?.name}</h1>
-            <dl className="db-panel__fields">
-              <div className="db-panel__field">
-                <dt>Email</dt>
-                <dd>{user?.email}</dd>
-              </div>
-            </dl>
           </div>
 
+          <Link to="/profile" className="db-panel__profile">My Profile</Link>
           <button onClick={logout} className="db-panel__logout">Sign Out</button>
         </aside>
 
@@ -182,18 +177,6 @@ export default function DashboardPage() {
                   Share your perspective with readers who want to think.
                 </p>
                 <span className="db-action__cta">Start Writing &rarr;</span>
-              </div>
-            </Link>
-
-            <Link to="/profile" className="db-action">
-              <span className="db-action__num">02</span>
-              <div className="db-action__content">
-                <span className="db-action__kicker">&#9670; Account</span>
-                <h2 className="db-action__title">My Profile</h2>
-                <p className="db-action__body">
-                  Review your account details and published essays.
-                </p>
-                <span className="db-action__cta">View Profile &rarr;</span>
               </div>
             </Link>
           </section>

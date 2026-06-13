@@ -23,7 +23,10 @@ export default function PublishSuccessPage() {
       <header className="ps-nav">
         <div className="ps-nav__spacer" />
         <Link to="/" className="ps-nav__logo">Two Cents</Link>
-        <button onClick={logout} className="ps-nav__logout">Logout</button>
+        <div className="ps-nav__right">
+          <Link to="/profile" className="ps-nav__profile">Profile</Link>
+          <button onClick={logout} className="ps-nav__logout">Logout</button>
+        </div>
       </header>
 
       {/* Confirmation */}

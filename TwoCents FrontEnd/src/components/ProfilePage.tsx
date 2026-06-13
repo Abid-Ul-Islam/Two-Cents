@@ -9,6 +9,10 @@ interface Blog {
   id: string
   title: string
   body: string
+  authorId: string
+  authorName: string
+  createdAt: string
+  tags: Array<{ id: number; name: string; slug: string }>
 }
 
 export default function ProfilePage() {
@@ -121,6 +125,9 @@ export default function ProfilePage() {
                         <span className="pf-essay__cta">Read essay →</span>
                       </div>
                     </Link>
+                    <div className="pf-essay__footer">
+                      <Link to={`/write/${b.id}`} className="pf-essay__edit">Edit →</Link>
+                    </div>
                   </li>
                 ))}
               </ol>

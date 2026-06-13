@@ -26,6 +26,7 @@ function App() {
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/write" element={<ProtectedRoute><WriteBlogPage /></ProtectedRoute>} />
           <Route path="/write/success" element={<ProtectedRoute><PublishSuccessPage /></ProtectedRoute>} />
+          <Route path="/write/:id" element={<ProtectedRoute><WriteBlogPage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/blog/:id" element={<ProtectedRoute><BlogDetailPage /></ProtectedRoute>} />
           <Route path="/search" element={<ProtectedRoute><SearchResultsPage /></ProtectedRoute>} />

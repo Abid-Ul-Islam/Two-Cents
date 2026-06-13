@@ -151,6 +151,24 @@
   word-break: break-all;
 }
 
+.db-panel__profile {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--silver-dk);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 12px 20px;
+  align-self: flex-start;
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s;
+}
+.db-panel__profile:hover {
+  color: var(--white);
+  border-color: rgba(255,255,255,0.3);
+}
+
 .db-panel__logout {
   font-family: var(--font-ui);
   font-size: 0.78rem;

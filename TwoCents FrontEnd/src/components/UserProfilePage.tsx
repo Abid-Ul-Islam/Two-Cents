@@ -15,6 +15,10 @@ interface Blog {
   id: string
   title: string
   body: string
+  authorId: string
+  authorName: string
+  createdAt: string
+  tags: Array<{ id: number; name: string; slug: string }>
 }
 
 export default function UserProfilePage() {
