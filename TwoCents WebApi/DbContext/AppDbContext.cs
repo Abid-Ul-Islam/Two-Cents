@@ -20,6 +20,19 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
             .WithMany(u => u.Blogs)
             .HasForeignKey(b => b.AuthorId);
         
+        modelBuilder.Entity<Upvote>()
+            .HasOne(u => u.User)
+            .WithMany(u => u.Upvotes)
+            .HasForeignKey(u => u.UserId);
+        
+        modelBuilder.Entity<Upvote>()
+            .HasOne(u => u.Blog)
+            .WithMany(b => b.Upvotes)
+            .HasForeignKey(u => u.BlogId);
+        
+        modelBuilder.Entity<Upvote>()
+            .HasKey(u => new { u.UserId, u.BlogId });
+        
         modelBuilder.Entity<Blog>()
             .HasMany(b => b.Tags)
             .WithMany(t => t.Blogs);

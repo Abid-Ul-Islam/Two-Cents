@@ -57,6 +57,9 @@ namespace TwoCents_WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<long>("UpvoteCount")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -230,6 +233,21 @@ namespace TwoCents_WebApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("TwoCents_WebApi.Entities.Upvote", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BlogId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "BlogId");
+
+                    b.HasIndex("BlogId");
+
+                    b.ToTable("Upvote");
+                });
+
             modelBuilder.Entity("TwoCents_WebApi.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -293,11 +311,37 @@ namespace TwoCents_WebApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TwoCents_WebApi.Entities.Upvote", b =>
+                {
+                    b.HasOne("TwoCents_WebApi.Entities.Blog", "Blog")
+                        .WithMany("Upvotes")
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TwoCents_WebApi.Entities.User", "User")
+                        .WithMany("Upvotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Blog");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TwoCents_WebApi.Entities.Blog", b =>
+                {
+                    b.Navigation("Upvotes");
+                });
+
             modelBuilder.Entity("TwoCents_WebApi.Entities.User", b =>
                 {
                     b.Navigation("Blogs");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Upvotes");
                 });
 #pragma warning restore 612, 618
         }
