@@ -46,6 +46,10 @@ namespace TwoCents_WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("AuthorName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text");
@@ -245,7 +249,7 @@ namespace TwoCents_WebApi.Migrations
 
                     b.HasIndex("BlogId");
 
-                    b.ToTable("Upvote");
+                    b.ToTable("Upvotes");
                 });
 
             modelBuilder.Entity("TwoCents_WebApi.Entities.User", b =>

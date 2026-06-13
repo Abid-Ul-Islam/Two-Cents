@@ -26,6 +26,8 @@ public class BlogController : ControllerBase
         [FromQuery] List<int>? tags,
         [FromQuery] string? authorId)
     {
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
         var query = _context.Blogs.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(authorId))
@@ -33,38 +35,99 @@ public class BlogController : ControllerBase
 
         if (tags is not null && tags.Count > 0) 
             query = query.Where(b => b.Tags.Any(t => tags.Contains(t.Id)));
-        
-        var blogs = await query
-            .Select(b => new {
-                b.Id,
-                b.Title,
-                b.Body,
-                b.AuthorId,
-                AuthorName = b.User.Name,
-                b.CreatedAt,
-                Tags = b.Tags.Select(t => new { t.Id, t.Name, t.Slug })
-            })
-            .ToListAsync();
 
+        var blogs = await query
+            .Select(b => new BlogResponseDto
+            {
+                Id = b.Id,
+                Title = b.Title,
+                Body = b.Body,
+                AuthorName = b.AuthorName,
+                UpvoteCount = b.UpvoteCount,
+                CreatedAt = b.CreatedAt,
+                AuthorId = b.AuthorId,
+                IsUpvotedByCurrentUser =
+                    b.Upvotes.Any(u => u.UserId == userId),
+
+                Tags = b.Tags.Select(t => new TagDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Slug = t.Slug
+                }).ToList()
+            }).ToListAsync<BlogResponseDto>();
+        
         return Ok(blogs);
+    }
+
+    [HttpPost("{blogId}/vote")]
+    public async Task<IActionResult> UpvoteBlog(string blogId)
+    {
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        Blog blog = await _context.Blogs.FindAsync(blogId);
+        blog.UpvoteCount++;
+
+        Upvote upvote = new()
+        {
+            UserId = userId,
+            BlogId = blogId
+        };
+        
+        _context.Upvotes.Add(upvote);
+        await _context.SaveChangesAsync();
+        
+        return Created();
+    }
+    
+    [HttpDelete("{blogId}/vote")]
+    public async Task<IActionResult> RemoveUpvote(string blogId)
+    {
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        Blog blog = await _context.Blogs.FindAsync(blogId);
+        blog.UpvoteCount--;
+
+        Upvote upvote = new()
+        {
+            UserId = userId,
+            BlogId = blogId
+        };
+
+        _context.Upvotes.Remove(upvote);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
     
     [HttpGet("{blogId}")]
     public async Task<IActionResult> GetBlogByBlogId (string blogId)
     {
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
         var blog = await _context.Blogs
             .Where(b => b.Id == blogId)
-            .Select(b => new {
-                b.Id,
-                b.Title,
-                b.Body,
-                b.AuthorId,
-                AuthorName = b.User.Name,
-                b.CreatedAt,
-                Tags = b.Tags.Select(t => new { t.Id, t.Name, t.Slug })
+            .Select(b => new BlogResponseDto
+            {
+                Id = b.Id,
+                Title = b.Title,
+                Body = b.Body,
+                AuthorName = b.AuthorName,
+                UpvoteCount = b.UpvoteCount,
+                CreatedAt = b.CreatedAt,
+                AuthorId = b.AuthorId,
+                IsUpvotedByCurrentUser =
+                    b.Upvotes.Any(u => u.UserId == userId),
+                    
+                Tags = b.Tags.Select(t => new TagDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Slug = t.Slug
+                }).ToList()
             })
             .FirstOrDefaultAsync();
-
+        
         if (blog is null)
             return NotFound();
 
@@ -79,6 +142,10 @@ public class BlogController : ControllerBase
         if (userId is null)
             return BadRequest();
         
+        var user = await _context.Users.FindAsync(userId);
+        if (user is null)
+            return BadRequest();
+
         var tagIds = request.TagIds ?? [];
 
         var tags = await _context.Tags
@@ -87,13 +154,14 @@ public class BlogController : ControllerBase
 
         if (tags.Count != tagIds.Count)
             return BadRequest("One or more tags are invalid.");
-        
+
         Blog blog = new()
         {
             Id = Guid.NewGuid().ToString(),
             Title = request.Title,
             Body = request.Body,
             AuthorId = userId,
+            AuthorName = user.Name,
             CreatedAt = DateTime.UtcNow,
             Tags = tags
         };

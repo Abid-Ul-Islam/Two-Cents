@@ -77,4 +77,6 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Tag> Tags { get; set; }
+    
+    public DbSet<Upvote> Upvotes { get; set; }
 }
