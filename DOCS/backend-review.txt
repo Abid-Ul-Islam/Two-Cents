@@ -1,0 +1,278 @@
+════════════════════════════════════════════════════════════════
+SECURITY
+════════════════════════════════════════════════════════════════
+
+----------------------------------------------------------------------
+
+[HIGH] S2 — Login Vulnerable to Email Enumeration via Timing Attack
+File: LoginController.cs:26-36
+------------------------------------------------------
+When the email does not exist, the code sets passwordVerified = false
+and skips BCrypt.Verify entirely. BCrypt.Verify is intentionally slow
+(~100ms). A non-existent email returns almost instantly; a wrong password
+takes ~100ms. An attacker can distinguish "email not registered" from
+"wrong password" by measuring response time, enabling email enumeration.
+
+Fix: Always call BCrypt.Verify, even when the user is not found:
+
+    bool passwordVerified =
+        user != null &&
+        BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash ?? "$2a$11$dummy...");
+
+----------------------------------------------------------------------
+
+[HIGH] S3 — No Duplicate Upvote Guard in UpvoteBlog
+File: BlogController.cs:63-81
+------------------------------------------------------
+UpvoteBlog does not check whether the user already upvoted. On the
+first duplicate POST, the composite PK constraint on the Upvotes table
+(UserId, BlogId) will throw an unhandled database exception (500).
+But before throwing, blog.UpvoteCount++ has already run, so the count
+is incremented without a matching Upvote row being inserted, causing
+the count to permanently diverge from the actual number of upvotes.
+
+Fix: Query for an existing Upvote before proceeding:
+
+    bool alreadyUpvoted = await _context.Upvotes
+        .AnyAsync(u => u.UserId == userId && u.BlogId == blogId);
+    if (alreadyUpvoted) return Conflict();
+
+----------------------------------------------------------------------
+
+[HIGH] S4 — No Guard Against Removing a Non-Existent Upvote
+File: BlogController.cs:83-101
+------------------------------------------------------
+RemoveUpvote decrements blog.UpvoteCount without checking whether
+the Upvote row actually exists. Calling DELETE without having upvoted
+first will decrement the counter permanently (possibly to a negative
+number) while the Upvotes.Remove call silently does nothing (EF Core
+ignores removes on entities it is not tracking, which will depend on
+EF version behaviour).
+
+Fix: Find the Upvote row first and return 404 if it doesn't exist:
+
+    Upvote? upvote = await _context.Upvotes
+        .FindAsync(userId, blogId);
+    if (upvote is null) return NotFound();
+    blog.UpvoteCount--;
+    _context.Upvotes.Remove(upvote);
+
+
+════════════════════════════════════════════════════════════════
+MISTAKES IN DB CALLS
+════════════════════════════════════════════════════════════════
+[MEDIUM] D5 — Logout Queries Refresh Tokens via Email Join Instead of UserId
+File: LogoutController.cs:27-33
+------------------------------------------------------
+Logout extracts the email from the JWT claim, then queries
+RefreshTokens with .Include(rt => rt.User).Where(rt => rt.User.Email == email).
+This forces a JOIN to the Users table and loads User objects into memory
+unnecessarily. The JWT already contains the user ID.
+
+Fix: Use ClaimTypes.NameIdentifier instead and query directly by UserId:
+
+    string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var tokens = await _context.RefreshTokens
+        .Where(rt => rt.UserId == userId)
+        .ToListAsync();
+
+----------------------------------------------------------------------
+
+[LOW] D6 — AppDbContext Has a Parameterless Constructor
+File: AppDbContext.cs:9-12
+------------------------------------------------------
+The empty public AppDbContext() constructor bypasses the required
+DbContextOptions. It is never used by the DI container (which always
+calls the options constructor) but it allows accidental instantiation
+of an unconfigured context which will throw at runtime.
+
+Fix: Remove the parameterless constructor.
+
+----------------------------------------------------------------------
+
+[LOW] D7 — AuthorName Denormalized on Blog Entity
+File: Blog.cs:11, BlogController.cs:113
+------------------------------------------------------
+AuthorName is stored on every Blog row and set at creation time from
+user.Name. If the user ever changes their display name, all previously
+published blogs will show the old name. This is an intentional trade-off
+(avoids a join on every blog fetch) but it is not documented anywhere.
+
+Recommendation: Add a comment explaining this is intentional
+denormalization, and decide whether name-change propagation is a future
+requirement.
+
+
+════════════════════════════════════════════════════════════════
+MISTAKES IN API DESIGN
+════════════════════════════════════════════════════════════════
+
+[HIGH] A1 — No UserId Null Guard in Vote Endpoints
+File: BlogController.cs:66, 86
+------------------------------------------------------
+Both vote endpoints extract userId from the JWT claim but never check
+whether it is null before using it. The [Authorize] attribute ensures
+the token is valid, but does not guarantee the NameIdentifier claim
+exists. If it is absent, userId is null and gets stored as a null
+UserId in the Upvote entity (or causes a DB constraint violation).
+
+Fix: Add the same guard used in the other endpoints:
+
+    if (userId is null) return BadRequest();
+
+----------------------------------------------------------------------
+
+[MEDIUM] A2 — Register Returns 200 OK Instead of 201 Created
+File: RegisterController.cs:50
+------------------------------------------------------
+Creating a new resource should return 201 Created per HTTP semantics.
+Returning 200 OK implies the operation was idempotent, not that a new
+resource was created.
+
+Fix: return Created() or return StatusCode(201, new { message = "..." });
+
+----------------------------------------------------------------------
+
+[MEDIUM] A3 — Login Returns a Plain String Body, Not a JSON Object
+File: LoginController.cs:71
+------------------------------------------------------
+return Ok("Logged in") serializes as a raw JSON string "Logged in".
+Every other endpoint returns { message: "..." } objects. Inconsistent
+response shapes make the API harder to consume and harder to extend.
+
+Fix: return Ok(new { message = "Logged in" });
+
+----------------------------------------------------------------------
+
+[MEDIUM] A4 — PostBlogRequest Contains a Dead BlogId Field
+File: PostBlogRequest.cs:5
+------------------------------------------------------
+BlogId was originally used by UpdateBlog before UpdateBlogRequest was
+introduced. It is now nullable and ignored by PostBlog. Its presence
+is confusing to anyone reading the model — it looks like BlogId should
+be sent on POST requests.
+
+Fix: Remove BlogId from PostBlogRequest entirely.
+
+----------------------------------------------------------------------
+
+[MEDIUM] A5 — UpvoteBlog Returns 201 Created Without a Location Header
+File: BlogController.cs:80
+------------------------------------------------------
+return Created() returns 201 but with no Location header, which is
+required by the HTTP spec when returning 201. An upvote is not really
+a resource with its own URI; returning 200 Ok or 204 NoContent is
+more semantically correct.
+
+Fix: return Ok(); or return NoContent();
+
+----------------------------------------------------------------------
+
+[LOW] A6 — Route Token Casing Inconsistency Across Controllers
+Files: BlogController.cs:14, TagsController.cs:11
+------------------------------------------------------
+Most controllers use [Route("api/[Controller]")] with an uppercase C,
+while TagsController uses [Route("api/[controller]")] with a lowercase c.
+Both resolve correctly at runtime, but inconsistency makes the codebase
+harder to read.
+
+Fix: Pick one convention (lowercase is idiomatic in ASP.NET Core) and
+apply it uniformly.
+
+
+════════════════════════════════════════════════════════════════
+CODE QUALITY
+════════════════════════════════════════════════════════════════
+
+[MEDIUM] Q1 — No Input Validation on Blog Title and Body
+Files: PostBlogRequest.cs, UpdateBlogRequest.cs
+------------------------------------------------------
+Title and Body are non-nullable strings, which prevents a missing field
+from being sent. But they can still be empty strings ("") or strings
+containing only whitespace. The controller does not validate this.
+A blog with an empty title would be created successfully.
+
+Fix: Add [MinLength] / [Required] data annotations or check
+string.IsNullOrWhiteSpace in the controller before saving.
+
+----------------------------------------------------------------------
+
+[MEDIUM] Q2 — UserInfoValidator Does Not Validate Email Format
+File: Validators/UserInfoValidator.cs
+------------------------------------------------------
+The validator checks only that the email is not null or empty — any
+string passes. RegisterRequest has [EmailAddress] on the Email property,
+but that attribute is only enforced by model binding (ApiController),
+not by the manual ValidateUserInfo call. The validator and the
+data annotation are doing overlapping work, and the validator's email
+check provides no added value.
+
+Fix: Remove the redundant manual validator and rely solely on the
+[EmailAddress] data annotation, which is already enforced by [ApiController].
+
+----------------------------------------------------------------------
+
+[MEDIUM] Q3 — Duplicate Tag "Math" and "Mathematics" in Seed Data
+File: AppDbContext.cs:48, 71
+------------------------------------------------------
+The seed data includes both Tag Id=3 "Math" (slug: "math") and
+Tag Id=20 "Mathematics" (slug: "mathematics"). These represent the
+same concept, splitting users who might tag with either. Users searching
+for "Math" blogs would miss blogs tagged "Mathematics".
+
+Fix: Remove one of them (Math is redundant given Mathematics exists).
+
+----------------------------------------------------------------------
+
+[LOW] Q4 — MeController Returns an Anonymous Object Instead of a DTO
+File: MeController.cs:29
+------------------------------------------------------
+return Ok(new { id = user.Id, name = user.Name, email = user.Email })
+uses an anonymous type. This makes the response shape invisible to
+tooling (Swagger, etc.) and cannot be reused or documented easily.
+
+Fix: Return a named DTO (a UserDto class), consistent with how
+BlogController uses BlogResponseDto.
+
+----------------------------------------------------------------------
+
+[LOW] Q5 — Blank Lines Between Class-Level Attributes Are Inconsistent
+Files: BlogController.cs:11-14, LogoutController.cs:10-14
+------------------------------------------------------
+Some controllers have blank lines between [ApiController], [Authorize],
+and [Route(...)]. Others do not. This is purely cosmetic but signals
+low attention to consistency in the codebase.
+
+Fix: Keep attributes adjacent with no blank lines between them.
+
+
+════════════════════════════════════════════════════════════════
+SUMMARY TABLE
+════════════════════════════════════════════════════════════════
+
+ID  | Severity | Category    | Title
+----|----------|-------------|----------------------------------------------
+S1  | CRITICAL | Security    | JWT secret hardcoded in source
+S2  | HIGH     | Security    | Login timing attack / email enumeration
+S3  | HIGH     | Security    | No duplicate upvote guard (crash + count drift)
+S4  | HIGH     | Security    | No guard against removing non-existent upvote
+D1  | CRITICAL | DB Calls    | FindAsync without null guard in vote endpoints
+D2  | HIGH     | DB Calls    | Concurrent upvote counter drift
+D3  | HIGH     | DB Calls    | Synchronous DB calls in UserController
+D4  | MEDIUM   | DB Calls    | Two SaveChangesAsync calls in RefreshController
+D5  | MEDIUM   | DB Calls    | Logout queries by email join instead of userId
+D6  | LOW      | DB Calls    | AppDbContext parameterless constructor
+D7  | LOW      | DB Calls    | AuthorName denormalization undocumented
+A1  | HIGH     | API Design  | No userId null guard in vote endpoints
+A2  | MEDIUM   | API Design  | Register returns 200 instead of 201
+A3  | MEDIUM   | API Design  | Login returns plain string, not JSON object
+A4  | MEDIUM   | API Design  | Dead BlogId field in PostBlogRequest
+A5  | MEDIUM   | API Design  | UpvoteBlog returns 201 without Location header
+A6  | LOW      | API Design  | Route token casing inconsistency
+Q1  | MEDIUM   | Quality     | No whitespace validation on blog title/body
+Q2  | MEDIUM   | Quality     | UserInfoValidator email check redundant/weak
+Q3  | MEDIUM   | Quality     | Duplicate "Math"/"Mathematics" seed tags
+Q4  | LOW      | Quality     | MeController returns anonymous object
+Q5  | LOW      | Quality     | Inconsistent blank lines between attributes
+
+Total: 4 Critical/High security, 3 High DB, 5 Medium API, 5 Medium quality
