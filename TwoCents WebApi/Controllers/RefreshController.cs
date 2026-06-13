@@ -36,7 +36,6 @@ public class RefreshController : ControllerBase
         User user = matchedToken.User;
 
         _context.RefreshTokens.Remove(matchedToken);
-        await _context.SaveChangesAsync();
 
         RefreshToken refreshToken = TokenHelper.GenerateRefreshTokenForCurrentUser(user);
 

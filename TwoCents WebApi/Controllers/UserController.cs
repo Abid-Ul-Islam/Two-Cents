@@ -19,26 +19,26 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult Search ([FromQuery] string? name)
+    public async Task<IActionResult> Search ([FromQuery] string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return Ok(Array.Empty<object>());
 
-        var users = _context.Users
+        var users = await _context.Users
             .Where(u => EF.Functions.ILike(u.Name, $"%{name}%"))
             .Select(u => new { u.Id, u.Name, u.Email })
-            .ToList();
+            .ToListAsync();
 
         return Ok(users);
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById (string id)
+    public async Task<IActionResult> GetById (string id)
     {
-        var user = _context.Users
+        var user = await _context.Users
             .Where(u => u.Id == id)
             .Select(u => new { u.Id, u.Name, u.Email, u.Gender })
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
 
         if (user is null)
             return NotFound();

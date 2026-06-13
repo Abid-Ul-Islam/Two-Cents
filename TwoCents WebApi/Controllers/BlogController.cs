@@ -65,9 +65,18 @@ public class BlogController : ControllerBase
     {
         string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
-        Blog blog = await _context.Blogs.FindAsync(blogId);
-        blog.UpvoteCount++;
+        var rows = await _context.Blogs
+            .Where(b => b.Id == blogId)
+            .ExecuteUpdateAsync(s => s.SetProperty(
+                b => b.UpvoteCount,
+                b => b.UpvoteCount + 1
+            ));
 
+        if (rows == 0)
+        {
+            return NotFound();
+        }
+        
         Upvote upvote = new()
         {
             UserId = userId,
@@ -85,9 +94,18 @@ public class BlogController : ControllerBase
     {
         string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
-        Blog blog = await _context.Blogs.FindAsync(blogId);
-        blog.UpvoteCount--;
+        var rows = await _context.Blogs
+            .Where(b => b.Id == blogId)
+            .ExecuteUpdateAsync(s => s.SetProperty(
+                b => b.UpvoteCount,
+                b => b.UpvoteCount - 1
+            ));
 
+        if (rows == 0)
+        {
+            return NotFound();
+        }
+        
         Upvote upvote = new()
         {
             UserId = userId,
