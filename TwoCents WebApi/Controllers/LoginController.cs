@@ -75,8 +75,7 @@ public class LoginController : ControllerBase
                 Expires = DateTime.UtcNow.AddMinutes(10)
             }
             );
-
-        Console.WriteLine("I was here");
+        
         return Ok(new { message = "Logged in" });
     }
 }

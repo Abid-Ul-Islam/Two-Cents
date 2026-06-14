@@ -40,7 +40,9 @@ public class RegisterController : ControllerBase
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
-
+        
+        Console.WriteLine("REGISTER HIT " + DateTime.UtcNow);
+        
         return StatusCode(201, new
         {
             message = "Registration Successful"
