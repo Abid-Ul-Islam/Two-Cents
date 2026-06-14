@@ -23,7 +23,9 @@ public class LoginController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Login (LoginRequest request)
     {
+        Console.WriteLine("I was here");
         return Ok("alive");
+        
         User? user = await _context.Users
             .FirstOrDefaultAsync(u => u.Email == request.Email);
 
