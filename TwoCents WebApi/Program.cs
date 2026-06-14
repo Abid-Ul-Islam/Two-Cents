@@ -8,19 +8,6 @@ using TwoCents_WebApi.DbContext;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowReactApp",
-//        policy =>
-//        {
-//            policy
-//                .WithOrigins("http://localhost:5173")
-//                .AllowAnyHeader()
-//                .AllowAnyMethod()
-//                .AllowCredentials();
-//        });
-//});
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -48,8 +35,8 @@ builder.Services
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
 
