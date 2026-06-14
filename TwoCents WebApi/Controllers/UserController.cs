@@ -7,7 +7,6 @@ namespace TwoCents_WebApi.Controllers;
 
 [ApiController]
 [Authorize]
-
 [Route("api/[Controller]")]
 public class UserController : ControllerBase
 {
@@ -26,7 +25,7 @@ public class UserController : ControllerBase
 
         var users = await _context.Users
             .Where(u => EF.Functions.ILike(u.Name, $"%{name}%"))
-            .Select(u => new { u.Id, u.Name, u.Email })
+            .Select(u => new { u.Id, u.Name})
             .ToListAsync();
 
         return Ok(users);
@@ -37,7 +36,7 @@ public class UserController : ControllerBase
     {
         var user = await _context.Users
             .Where(u => u.Id == id)
-            .Select(u => new { u.Id, u.Name, u.Email, u.Gender })
+            .Select(u => new { u.Id, u.Name})
             .FirstOrDefaultAsync();
 
         if (user is null)

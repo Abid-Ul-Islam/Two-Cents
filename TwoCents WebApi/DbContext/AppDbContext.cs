@@ -6,11 +6,6 @@ namespace TwoCents_WebApi.DbContext;
 
 public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
 {
-    public AppDbContext ()
-    {
-
-    }
-
     protected override void OnModelCreating (ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -9,8 +9,6 @@ namespace TwoCents_WebApi.Controllers;
 
 [Authorize]
 [ApiController]
-
-
 [Route("api/[Controller]")]
 public class LogoutController : ControllerBase
 {
@@ -24,11 +22,10 @@ public class LogoutController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Logout ()
     {
-        string? email = User.FindFirst(ClaimTypes.Email)?.Value;
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         List<RefreshToken> tokens = await _context.RefreshTokens
-            .Include(rt => rt.User)
-            .Where(rt => rt.User.Email == email)
+            .Where(rt => rt.User.Id == userId)
             .ToListAsync();
 
         if (tokens.Count > 0)
@@ -53,6 +50,6 @@ public class LogoutController : ControllerBase
             Path = "/api/refresh"
         });
 
-        return Ok("Logged out");
+        return Ok(new { message = "Logged out" });
     }
 }

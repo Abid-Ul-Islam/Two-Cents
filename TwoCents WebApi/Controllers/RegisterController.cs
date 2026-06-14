@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using TwoCents_WebApi.DbContext;
 using TwoCents_WebApi.Entities;
 using TwoCents_WebApi.Models;
-using TwoCents_WebApi.Validators;
 
 namespace TwoCents_WebApi.Controllers;
 
@@ -22,11 +21,6 @@ public class RegisterController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Register (RegisterRequest registerRequest)
     {
-        if (!UserInfoValidator.ValidateUserInfo(registerRequest))
-        {
-            return BadRequest(new { message = "Invalid user information. Please check the provided data and try again." });
-        }
-
         bool duplicateEmail = await _context.Users
                .AnyAsync(u => u.Email == registerRequest.Email);
 
@@ -47,7 +41,7 @@ public class RegisterController : ControllerBase
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
-        return Ok(new
+        return StatusCode(201, new
         {
             message = "Registration Successful"
         });

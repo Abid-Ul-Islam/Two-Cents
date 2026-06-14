@@ -12,8 +12,8 @@ namespace TwoCents_WebApi.Controllers;
 public class LoginController : ControllerBase
 {
     private readonly AppDbContext _context;
-    private readonly string AccessToken = "AccessToken";
-    private readonly string RefreshToken = "RefreshToken";
+    private const string RefreshTokenCookieName = "RefreshToken";
+    private const string AccessTokenCookieName  = "AccessToken";
 
     public LoginController (AppDbContext context)
     {
@@ -26,16 +26,24 @@ public class LoginController : ControllerBase
         User? user = await _context.Users
             .FirstOrDefaultAsync(u => u.Email == request.Email);
 
-        bool passwordVerified = false;
+        string hashToVerify = user?.PasswordHash ??
+                              "$2a$11$abcdefghijklmnopqrstuvwxyzABCDE1234567890abcdefghi";
 
-        if (user != null && BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            passwordVerified = true;
+        bool passwordVerified =
+            BCrypt.Net.BCrypt.Verify(request.Password, hashToVerify);
 
-        if (!passwordVerified)
+        if (user == null || !passwordVerified)
         {
-            return Unauthorized(new { message = "The given username or password does not match" });
+            return Unauthorized(new
+            {
+                message = "The given username or password does not match"
+            });
         }
-
+        
+        await _context.RefreshTokens
+            .Where(rt => rt.UserId == user.Id && rt.ExpiresAt <= DateTime.UtcNow)
+            .ExecuteDeleteAsync();
+        
         RefreshToken refreshToken = TokenHelper.GenerateRefreshTokenForCurrentUser(user);
 
         await _context.RefreshTokens.AddAsync(refreshToken);
@@ -43,7 +51,7 @@ public class LoginController : ControllerBase
 
 
         Response.Cookies.Append(
-            RefreshToken,
+            RefreshTokenCookieName,
             refreshToken.Token,
             new CookieOptions
             {
@@ -56,7 +64,7 @@ public class LoginController : ControllerBase
         );
 
         Response.Cookies.Append(
-            AccessToken,
+            AccessTokenCookieName,
             TokenHelper.GenerateAccessToken(user!),
             new CookieOptions
             {
@@ -68,6 +76,6 @@ public class LoginController : ControllerBase
             );
 
 
-        return Ok("Logged in");
+        return Ok(new { message = "Logged in" });
     }
 }

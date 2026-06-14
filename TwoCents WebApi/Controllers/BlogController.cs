@@ -10,7 +10,6 @@ namespace TwoCents_WebApi.Controllers;
 
 [ApiController]
 [Authorize]
-
 [Route("api/[Controller]")]
 public class BlogController : ControllerBase
 {
@@ -64,29 +63,35 @@ public class BlogController : ControllerBase
     public async Task<IActionResult> UpvoteBlog(string blogId)
     {
         string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
+        if (userId is null) return BadRequest();
+
+        await using var tx = await _context.Database.BeginTransactionAsync();
+
+        bool alreadyUpvoted = await _context.Upvotes
+            .AnyAsync(u => u.UserId == userId && u.BlogId == blogId);
+
+        if (alreadyUpvoted)
+        {
+            await tx.RollbackAsync();
+            return Conflict();
+        }
+
         var rows = await _context.Blogs
             .Where(b => b.Id == blogId)
             .ExecuteUpdateAsync(s => s.SetProperty(
-                b => b.UpvoteCount,
-                b => b.UpvoteCount + 1
-            ));
+                b => b.UpvoteCount, b => b.UpvoteCount + 1));
 
         if (rows == 0)
         {
+            await tx.RollbackAsync();
             return NotFound();
         }
-        
-        Upvote upvote = new()
-        {
-            UserId = userId,
-            BlogId = blogId
-        };
-        
-        _context.Upvotes.Add(upvote);
+
+        _context.Upvotes.Add(new Upvote { UserId = userId, BlogId = blogId });
         await _context.SaveChangesAsync();
-        
-        return Created();
+        await tx.CommitAsync();
+
+        return Ok();
     }
     
     [HttpDelete("{blogId}/vote")]
@@ -94,23 +99,20 @@ public class BlogController : ControllerBase
     {
         string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
+        if (userId is null) return BadRequest();
+        
+        Upvote? upvote = await _context.Upvotes
+            .FindAsync(userId, blogId);
+        
+        if (upvote is null) return NotFound();
+        
         var rows = await _context.Blogs
             .Where(b => b.Id == blogId)
             .ExecuteUpdateAsync(s => s.SetProperty(
-                b => b.UpvoteCount,
-                b => b.UpvoteCount - 1
-            ));
+                b => b.UpvoteCount, b => b.UpvoteCount - 1));
 
-        if (rows == 0)
-        {
-            return NotFound();
-        }
+        if (rows == 0) return NotFound();
         
-        Upvote upvote = new()
-        {
-            UserId = userId,
-            BlogId = blogId
-        };
 
         _context.Upvotes.Remove(upvote);
         await _context.SaveChangesAsync();

@@ -11,8 +11,8 @@ namespace TwoCents_WebApi.Controllers;
 public class RefreshController : ControllerBase
 {
     private readonly AppDbContext _context;
-    private readonly string AccessToken = "AccessToken";
-    private readonly string RefreshToken = "RefreshToken";
+    private const string RefreshTokenCookieName = "RefreshToken";
+    private const string AccessTokenCookieName  = "AccessToken";
 
     public RefreshController (AppDbContext context)
     {
@@ -22,11 +22,12 @@ public class RefreshController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> GetRefreshToken ()
     {
-        string? incomingToken = Request.Cookies[RefreshToken];
+        string? incomingToken = Request.Cookies[RefreshTokenCookieName];
 
         RefreshToken? matchedToken = await _context.RefreshTokens
             .Include(rt => rt.User)
-            .FirstOrDefaultAsync(rt => string.Equals(rt.Token, incomingToken) && rt.ExpiresAt > DateTime.UtcNow);
+            .FirstOrDefaultAsync(rt => rt.Token == incomingToken
+                                       && rt.ExpiresAt > DateTime.UtcNow);
 
         if (matchedToken is null)
         {
@@ -43,7 +44,7 @@ public class RefreshController : ControllerBase
         await _context.SaveChangesAsync();
 
         Response.Cookies.Append(
-            RefreshToken,
+            RefreshTokenCookieName,
             refreshToken.Token,
             new CookieOptions
             {
@@ -56,7 +57,7 @@ public class RefreshController : ControllerBase
         );
 
         Response.Cookies.Append(
-            AccessToken,
+            AccessTokenCookieName,
             TokenHelper.GenerateAccessToken(user!),
             new CookieOptions
             {

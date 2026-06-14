@@ -1,4 +1,3 @@
-using TwoCents_WebApi.Entities;
 
 namespace TwoCents_WebApi.Models;
 
@@ -16,7 +15,7 @@ public class BlogResponseDto
 
     public DateTime CreatedAt { get; set; }
     
-    public Boolean IsUpvotedByCurrentUser  { get; set; }
+    public bool IsUpvotedByCurrentUser  { get; set; }
     
     public List<TagDto> Tags { get; set; }
 }
