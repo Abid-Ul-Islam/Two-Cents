@@ -8,16 +8,28 @@ using TwoCents_WebApi.DbContext;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowReactApp",
+//        policy =>
+//        {
+//            policy
+//                .WithOrigins("http://localhost:5173")
+//                .AllowAnyHeader()
+//                .AllowAnyMethod()
+//                .AllowCredentials();
+//        });
+//});
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
+    options.AddPolicy("AllowAll",
         policy =>
         {
             policy
-                .WithOrigins("http://localhost:5173")
+                .AllowAnyOrigin()
                 .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowAnyMethod();
         });
 });
 
@@ -59,7 +71,8 @@ builder.Services
 
 WebApplication app = builder.Build();
 
-app.UseCors("AllowReactApp");
+//app.UseCors("AllowReactApp");
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
