@@ -53,6 +53,7 @@ function SignupPage() {
 
     setIsLoading(true);
     try {
+      console.log("SIGNUP FIRED", performance.now());
       const res = await fetch(`${BASE_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
