@@ -23,13 +23,16 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy
-                .AllowAnyOrigin()
+            policy.WithOrigins(
+                    "http://localhost:5173",
+                    "https://two-cents-n09ja0xtf-abid8.vercel.app"
+                )
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
@@ -72,7 +75,7 @@ builder.Services
 WebApplication app = builder.Build();
 
 //app.UseCors("AllowReactApp");
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
