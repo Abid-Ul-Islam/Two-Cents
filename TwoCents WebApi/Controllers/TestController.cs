@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TwoCents_WebApi.Models;
 
 namespace TwoCents_WebApi.Controllers;
 
@@ -9,7 +8,7 @@ public class TestController : ControllerBase
 {
 
     [HttpGet]
-    public async Task<IActionResult> Check (RegisterRequest registerRequest)
+    public async Task<IActionResult> Check ()
     {
         return Ok(new
         {
