@@ -26,10 +26,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins(
-                    "http://localhost:5173",
-                    "https://two-cents-n09ja0xtf-abid8.vercel.app"
-                )
+            policy.SetIsOriginAllowed(origin =>
+                {
+                    return origin.EndsWith(".vercel.app") ||
+                           origin == "http://localhost:5173";
+                })
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
