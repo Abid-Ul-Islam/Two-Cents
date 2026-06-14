@@ -7,8 +7,6 @@ import './ProfilePage.css'
 interface UserProfile {
   id: string
   name: string
-  email: string
-  gender?: string
 }
 
 interface Blog {
@@ -96,18 +94,6 @@ export default function UserProfilePage() {
             <p className="pf-panel__kicker">Writer Profile</p>
             <h1 className="pf-panel__name">{profile.name}</h1>
 
-            <dl className="pf-panel__fields">
-              <div className="pf-panel__field">
-                <dt>Email</dt>
-                <dd>{profile.email}</dd>
-              </div>
-              {profile.gender && (
-                <div className="pf-panel__field">
-                  <dt>Gender</dt>
-                  <dd>{profile.gender}</dd>
-                </div>
-              )}
-            </dl>
           </div>
 
           <p className="pf-panel__byline">A writer at Two Cents.</p>

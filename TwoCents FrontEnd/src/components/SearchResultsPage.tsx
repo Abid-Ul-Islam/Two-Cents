@@ -7,7 +7,6 @@ import './SearchResultsPage.css'
 interface UserResult {
   id: string
   name: string
-  email: string
 }
 
 export default function SearchResultsPage() {
@@ -62,7 +61,6 @@ export default function SearchResultsPage() {
               <li key={u.id} className="sr-result">
                 <Link to={`/user/${u.id}`} className="sr-result__link">
                   <span className="sr-result__name">{u.name}</span>
-                  <span className="sr-result__email">{u.email}</span>
                 </Link>
               </li>
             ))}
