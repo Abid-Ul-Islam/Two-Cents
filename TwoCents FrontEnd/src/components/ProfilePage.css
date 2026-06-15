@@ -58,23 +58,12 @@
 .pf-header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 64px 48px 56px;
+  padding: 36px 48px 52px;
 }
 
 .pf-header__inner {
   max-width: 720px;
   margin: 0 auto;
-}
-
-.pf-header__kicker {
-  display: block;
-  font-family: var(--font-ui);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--silver-dk);
-  margin-bottom: 16px;
 }
 
 .pf-header__name {
@@ -84,16 +73,8 @@
   color: var(--ink);
   letter-spacing: -0.025em;
   line-height: 1.05;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
   word-break: break-word;
-}
-
-.pf-header__tagline {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--ink-lt);
-  margin-bottom: 32px;
 }
 
 /* Details (email, gender) */
@@ -136,18 +117,18 @@
 .pf-stat {
   display: flex;
   flex-direction: column;
-  padding: 16px 28px 16px 20px;
+  padding: 22px 40px 22px 24px;
   background: var(--white);
   border: 1px solid var(--border);
 }
 
 .pf-stat__value {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: 700;
   color: var(--ink);
   line-height: 1;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .pf-stat__label {
@@ -331,8 +312,8 @@
   .pf-header { padding: 48px 20px 44px; }
 
   .pf-stats { gap: 10px; }
-  .pf-stat { padding: 12px 20px 12px 16px; }
-  .pf-stat__value { font-size: 1.6rem; }
+  .pf-stat { padding: 16px 24px 16px 18px; }
+  .pf-stat__value { font-size: 1.9rem; }
 
   .pf-essays { padding: 48px 20px 72px; }
 }

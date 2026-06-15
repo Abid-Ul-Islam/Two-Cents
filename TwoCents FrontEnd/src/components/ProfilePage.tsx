@@ -63,9 +63,7 @@ export default function ProfilePage() {
       {/* Profile header */}
       <header className="pf-header">
         <div className="pf-header__inner">
-          <span className="pf-header__kicker">Your Profile</span>
           <h1 className="pf-header__name">{user.name}</h1>
-          <p className="pf-header__tagline">A writer at Two Cents.</p>
 
           <dl className="pf-header__details">
             <div className="pf-header__detail">
@@ -87,8 +85,8 @@ export default function ProfilePage() {
                 <span className="pf-stat__label">Essays</span>
               </div>
               <div className="pf-stat">
-                <span className="pf-stat__value">{totalUpvotes}</span>
-                <span className="pf-stat__label">Upvotes</span>
+                <span className="pf-stat__value">0</span>
+                <span className="pf-stat__label">Subscribers</span>
               </div>
             </div>
           )}

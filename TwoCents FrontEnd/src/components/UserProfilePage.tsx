@@ -94,9 +94,7 @@ export default function UserProfilePage() {
       {/* Profile header */}
       <header className="pf-header">
         <div className="pf-header__inner">
-          <span className="pf-header__kicker">Writer Profile</span>
           <h1 className="pf-header__name">{profile.name}</h1>
-          <p className="pf-header__tagline">A writer at Two Cents.</p>
 
           <div className="pf-stats">
             <div className="pf-stat">
@@ -104,8 +102,8 @@ export default function UserProfilePage() {
               <span className="pf-stat__label">Essays</span>
             </div>
             <div className="pf-stat">
-              <span className="pf-stat__value">{blogs.reduce((sum, b) => sum + b.upvoteCount, 0)}</span>
-              <span className="pf-stat__label">Upvotes</span>
+              <span className="pf-stat__value">0</span>
+              <span className="pf-stat__label">Subscribers</span>
             </div>
           </div>
         </div>
