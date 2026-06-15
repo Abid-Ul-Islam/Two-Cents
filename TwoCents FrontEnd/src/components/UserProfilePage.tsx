@@ -66,83 +66,101 @@ export default function UserProfilePage() {
 
   if (error || !profile) {
     return (
-      <div style={{ padding: 64, fontFamily: 'var(--font-ui)', color: 'var(--ink)' }}>
-        {error || 'Writer not found.'}
+      <div className="pf-page">
+        <nav className="pf-nav">
+          <button className="pf-nav__back" onClick={() => navigate(-1)}>← Back</button>
+          <Link to="/" className="pf-nav__logo">Two Cents</Link>
+          <span />
+        </nav>
+        <main className="pf-essays">
+          <div className="pf-essays__inner">
+            <p className="pf-essays__state pf-essays__state--error">{error || 'Writer not found.'}</p>
+          </div>
+        </main>
       </div>
     )
   }
 
   return (
     <div className="pf-page">
-      <div className="pf-body">
 
-        {/* Left: Identity Panel */}
-        <aside className="pf-panel">
-          <button className="pf-panel__home" onClick={() => navigate(-1)}>&larr; Back</button>
+      {/* Nav */}
+      <nav className="pf-nav">
+        <button className="pf-nav__back" onClick={() => navigate(-1)}>← Back</button>
+        <Link to="/" className="pf-nav__logo">Two Cents</Link>
+        <span />
+      </nav>
 
-          <div className="pf-panel__top">
-            <div className="pf-panel__ornament">
-              <span className="pf-panel__ornament-line" />
-              <span className="pf-panel__ornament-diamond">&#9670;</span>
-              <span className="pf-panel__ornament-line" />
+      {/* Profile header */}
+      <header className="pf-header">
+        <div className="pf-header__inner">
+          <span className="pf-header__kicker">Writer Profile</span>
+          <h1 className="pf-header__name">{profile.name}</h1>
+          <p className="pf-header__tagline">A writer at Two Cents.</p>
+
+          <div className="pf-stats">
+            <div className="pf-stat">
+              <span className="pf-stat__value">{blogs.length}</span>
+              <span className="pf-stat__label">Essays</span>
             </div>
-            <Link to="/" className="pf-panel__logo">Two Cents</Link>
-            <p className="pf-panel__tagline">Good writing finds its people here.</p>
+            <div className="pf-stat">
+              <span className="pf-stat__value">{blogs.reduce((sum, b) => sum + b.upvoteCount, 0)}</span>
+              <span className="pf-stat__label">Upvotes</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Essays */}
+      <main className="pf-essays">
+        <div className="pf-essays__inner">
+
+          <div className="pf-essays__heading">
+            <span className="pf-essays__heading-label">Essays</span>
+            <span className="pf-essays__heading-count">
+              {String(blogs.length).padStart(2, '0')}
+            </span>
           </div>
 
-          <div className="pf-panel__identity">
-            <p className="pf-panel__kicker">Writer Profile</p>
-            <h1 className="pf-panel__name">{profile.name}</h1>
+          {blogs.length === 0 && (
+            <p className="pf-essays__state">No essays published yet.</p>
+          )}
 
-          </div>
-
-          <p className="pf-panel__byline">A writer at Two Cents.</p>
-        </aside>
-
-        {/* Right: Essays */}
-        <section className="pf-essays-side">
-          <div className="pf-essays-side__inner">
-            <div className="pf-essays__heading">
-              <span className="pf-essays__heading-label">Essays</span>
-              <span className="pf-essays__heading-count">
-                {String(blogs.length).padStart(2, '0')}
-              </span>
-            </div>
-
-            {blogs.length === 0 && (
-              <p className="pf-essays__state">No essays published yet.</p>
-            )}
-
-            {blogs.length > 0 && (
-              <ol className="pf-essay-list">
-                {blogs.map((b, idx) => (
-                  <li key={b.id} className="pf-essay">
-                    <Link to={`/blog/${b.id}`} className="pf-essay__link">
-                      <span className="pf-essay__num">
-                        {String(idx + 1).padStart(2, '0')}
+          {blogs.length > 0 && (
+            <ol className="pf-essay-list">
+              {blogs.map(b => (
+                <li key={b.id} className="pf-essay">
+                  <Link to={`/blog/${b.id}`} className="pf-essay__link">
+                    <div className="pf-essay__top">
+                      <h3 className="pf-essay__title">{b.title}</h3>
+                      <span className="pf-essay__upvotes">
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="pf-essay__upvote-icon">
+                          <path d="M12 2L3 13h5v9h8v-9h5L12 2z" />
+                        </svg>
+                        {b.upvoteCount}
                       </span>
-                      <div className="pf-essay__content">
-                        <div className="pf-essay__title-row">
-                          <h3 className="pf-essay__title">{b.title}</h3>
-                          <span className="pf-essay__upvotes">
-                            <svg viewBox="0 0 24 24" fill="currentColor" className="pf-essay__upvote-icon">
-                              <path d="M12 2L3 13h5v9h8v-9h5L12 2z" />
-                            </svg>
-                            {b.upvoteCount}
-                          </span>
-                        </div>
-                        <p className="pf-essay__excerpt">{b.body}</p>
-                        <span className="pf-essay__cta">Read essay &rarr;</span>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </div>
-        </section>
+                    </div>
+                    <div className="pf-essay__byline">
+                      {b.tags.length > 0 && (
+                        <span className="pf-essay__tags">
+                          {b.tags.map(t => t.name).join(' · ')}
+                        </span>
+                      )}
+                      <span className="pf-essay__date">
+                        {new Date(b.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </span>
+                    </div>
+                    <p className="pf-essay__excerpt">{b.body}</p>
+                    <span className="pf-essay__cta">Read essay →</span>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          )}
 
-      </div>
+        </div>
+      </main>
+
     </div>
   )
 }

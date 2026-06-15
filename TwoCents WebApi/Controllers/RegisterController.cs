@@ -21,7 +21,6 @@ public class RegisterController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Register (RegisterRequest registerRequest)
     {
-        Console.WriteLine("REGISTER HIT " + DateTime.UtcNow);
         bool duplicateEmail = await _context.Users
                .AnyAsync(u => u.Email == registerRequest.Email);
 
