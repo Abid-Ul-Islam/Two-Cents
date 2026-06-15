@@ -48,8 +48,6 @@ export default function ProfilePage() {
 
   if (!user) return null
 
-  const totalUpvotes = blogs.reduce((sum, b) => sum + b.upvoteCount, 0)
-
   return (
     <div className="pf-page">
 
