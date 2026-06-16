@@ -11,14 +11,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.SetIsOriginAllowed(origin =>
-                {
-                    return origin.EndsWith("https://two-cents-two.vercel.app/") ||
-                           origin == "http://localhost:5173";
-                })
+            policy
+                .WithOrigins(
+                    "https://two-cents-two.vercel.app",
+                    "http://localhost:5173"
+                )
+                .AllowCredentials()
                 .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowAnyMethod();
         });
 });
 
