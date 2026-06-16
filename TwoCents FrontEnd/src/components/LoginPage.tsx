@@ -15,7 +15,7 @@ export default function LoginPage() {
   const { isLoggedIn, loading, refreshUser } = useAuth();
 
   useEffect(() => {
-    if (!loading && isLoggedIn) navigate('/dashboard', { replace: true });
+    if (!loading && isLoggedIn) navigate('/', { replace: true });
   }, [isLoggedIn, loading, navigate]);
 
   const [formData, setFormData] = useState({
@@ -54,7 +54,7 @@ export default function LoginPage() {
 
       if (res.ok) {
         await refreshUser();
-        navigate("/dashboard");
+        navigate("/");
       } else {
         const data = await res.json();
         setError(data.message ?? "Something went wrong");

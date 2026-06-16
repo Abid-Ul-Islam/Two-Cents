@@ -47,7 +47,7 @@ export default function WriteBlogPage() {
         if (cancelled) return
 
         if (!blogRes.ok) {
-          setError('Essay not found.')
+          setError('Blog not found.')
           return
         }
 
@@ -143,7 +143,7 @@ export default function WriteBlogPage() {
           </div>
         </header>
         <main className="wb-main">
-          <p className="wb-section-label">Loading essay…</p>
+          <p className="wb-section-label">Loading blog…</p>
         </main>
       </div>
     )
@@ -154,8 +154,8 @@ export default function WriteBlogPage() {
 
       {/* Nav */}
       <header className="wb-nav">
-        <Link to={isEditing ? `/blog/${id}` : '/dashboard'} className="wb-nav__back">
-          {isEditing ? '← Essay' : '← Dashboard'}
+        <Link to={isEditing ? `/blog/${id}` : '/'} className="wb-nav__back">
+          {isEditing ? '← Blog' : '← Home'}
         </Link>
         <Link to="/" className="wb-nav__logo">Two Cents</Link>
         <div className="wb-nav__right">
@@ -166,7 +166,7 @@ export default function WriteBlogPage() {
 
       {/* Editor */}
       <main className="wb-main">
-        <div className="wb-section-label">{isEditing ? '◆ Edit Essay' : '◆ New Essay'}</div>
+        <div className="wb-section-label">{isEditing ? '◆ Edit Blog' : '◆ New Blog'}</div>
 
         {error && <p className="wb-error">{error}</p>}
 
@@ -185,7 +185,7 @@ export default function WriteBlogPage() {
 
           <textarea
             name="body"
-            placeholder="Write your essay…"
+            placeholder="Write your blog…"
             value={formData.body}
             onChange={handleChange}
             className="wb-body-input"
@@ -219,9 +219,9 @@ export default function WriteBlogPage() {
             <button type="submit" className="wb-submit" disabled={isLoading}>
               {isLoading
                 ? isEditing ? 'Saving…' : 'Publishing…'
-                : isEditing ? 'Save Changes' : 'Publish Essay'}
+                : isEditing ? 'Save Changes' : 'Publish Blog'}
             </button>
-            <Link to={isEditing ? `/blog/${id}` : '/dashboard'} className="wb-cancel">Discard</Link>
+            <Link to={isEditing ? `/blog/${id}` : '/'} className="wb-cancel">Discard</Link>
           </div>
         </form>
       </main>

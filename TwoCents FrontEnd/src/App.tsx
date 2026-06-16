@@ -5,7 +5,6 @@ import { AuthProvider } from './context/AuthContext'
 import HomePage from './components/HomePage'
 import LoginPage from './components/LoginPage.tsx'
 import SignupPage from './components/SignupPage.tsx'
-import DashboardPage from './components/DashboardPage.tsx'
 import WriteBlogPage from './components/WriteBlogPage.tsx'
 import PublishSuccessPage from './components/PublishSuccessPage.tsx'
 import ProfilePage from './components/ProfilePage.tsx'
@@ -23,7 +22,6 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/write" element={<ProtectedRoute><WriteBlogPage /></ProtectedRoute>} />
           <Route path="/write/success" element={<ProtectedRoute><PublishSuccessPage /></ProtectedRoute>} />
           <Route path="/write/:id" element={<ProtectedRoute><WriteBlogPage /></ProtectedRoute>} />

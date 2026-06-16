@@ -30,7 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         res = await fetch(`${BASE_URL}/api/me`, { credentials: 'include' })
       }
     }
-    setUser(res.ok ? await res.json() : null)
+    if (res.ok) {
+      setUser(await res.json())
+      localStorage.setItem('hadSession', '1')
+    } else {
+      setUser(null)
+      localStorage.removeItem('hadSession')
+    }
   }
 
   useEffect(() => {
@@ -40,6 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     await fetch(`${BASE_URL}/api/logout`, { method: 'POST', credentials: 'include' })
     setUser(null)
+    localStorage.removeItem('hadSession')
     window.location.href = '/'
   }
 

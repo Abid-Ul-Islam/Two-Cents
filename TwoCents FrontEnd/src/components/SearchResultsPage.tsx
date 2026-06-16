@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { fetchWithAuth } from '../utils/fetchWithAuth'
+import { capitalizeName } from '../utils/text'
 import { BASE_URL } from '../config'
 import './SearchResultsPage.css'
 
@@ -37,7 +38,7 @@ export default function SearchResultsPage() {
 
       {/* Nav */}
       <header className="sr-nav">
-        <Link to="/dashboard" className="sr-nav__back">&larr; Dashboard</Link>
+        <Link to="/" className="sr-nav__back">&larr; Home</Link>
         <Link to="/" className="sr-nav__logo">Two Cents</Link>
         <Link to="/profile" className="sr-nav__profile">Profile</Link>
       </header>
@@ -60,7 +61,7 @@ export default function SearchResultsPage() {
             {results.map(u => (
               <li key={u.id} className="sr-result">
                 <Link to={`/user/${u.id}`} className="sr-result__link">
-                  <span className="sr-result__name">{u.name}</span>
+                  <span className="sr-result__name">{capitalizeName(u.name)}</span>
                 </Link>
               </li>
             ))}

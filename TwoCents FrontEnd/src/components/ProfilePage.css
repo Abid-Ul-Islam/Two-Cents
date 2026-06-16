@@ -3,7 +3,7 @@
 ════════════════════════════════════════ */
 .pf-page {
   min-height: 100vh;
-  background: var(--white);
+  background: var(--surface);
 }
 
 /* ════════════════════════════════════════
@@ -15,10 +15,9 @@
   justify-content: space-between;
   padding: 0 48px;
   height: 60px;
-  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  background: var(--white);
+  background: var(--ink);
   z-index: 10;
 }
 
@@ -26,7 +25,7 @@
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 900;
-  color: var(--ink);
+  color: var(--white);
   text-decoration: none;
   letter-spacing: -0.02em;
 }
@@ -38,7 +37,7 @@
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--silver-dk);
+  color: var(--silver-mid);
   text-decoration: none;
   background: none;
   border: none;
@@ -50,13 +49,13 @@
 .pf-nav__back { text-align: left; }
 .pf-nav__action { text-align: right; }
 .pf-nav__back:hover,
-.pf-nav__action:hover { color: var(--ink); }
+.pf-nav__action:hover { color: var(--white); }
 
 /* ════════════════════════════════════════
    PROFILE HEADER
 ════════════════════════════════════════ */
 .pf-header {
-  background: var(--surface);
+  background: var(--white);
   border-bottom: 1px solid var(--border);
   padding: 36px 48px 52px;
 }
@@ -118,7 +117,7 @@
   display: flex;
   flex-direction: column;
   padding: 22px 40px 22px 24px;
-  background: var(--white);
+  background: var(--surface);
   border: 1px solid var(--border);
 }
 
@@ -141,30 +140,30 @@
 }
 
 /* ════════════════════════════════════════
-   ESSAYS SECTION
+   BLOGS SECTION
 ════════════════════════════════════════ */
-.pf-essays {
+.pf-blogs {
   padding: 64px 48px 96px;
 }
 
-.pf-essays__inner {
+.pf-blogs__inner {
   max-width: 720px;
   margin: 0 auto;
   animation: fade-up 0.5s ease both;
 }
 
 /* ════════════════════════════════════════
-   ESSAYS HEADING
+   BLOGS HEADING
 ════════════════════════════════════════ */
-.pf-essays__heading {
+.pf-blogs__heading {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  gap: 16px;
   padding-bottom: 16px;
   border-bottom: 2px solid var(--ink);
 }
 
-.pf-essays__heading-label {
+.pf-blogs__heading-label {
   font-family: var(--font-ui);
   font-size: 0.7rem;
   font-weight: 600;
@@ -173,7 +172,7 @@
   color: var(--ink);
 }
 
-.pf-essays__heading-count {
+.pf-blogs__heading-count {
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 700;
@@ -181,28 +180,53 @@
   line-height: 1;
 }
 
+.pf-blogs__new {
+  margin-left: auto;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  background: var(--ink);
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.pf-blogs__new:hover { background: var(--ink-mid); }
+
 /* ════════════════════════════════════════
-   ESSAY LIST
+   BLOG LIST
 ════════════════════════════════════════ */
-.pf-essay-list {
+.pf-blog-list {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.pf-essay {
-  border-bottom: 1px solid var(--border);
+.pf-blog {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.pf-essay:last-child { border-bottom: none; }
+.pf-blog:hover {
+  border-color: var(--border-dk);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
 
-.pf-essay__link {
+.pf-blog__link {
   display: block;
-  padding: 28px 0;
+  padding: 22px 24px;
   text-decoration: none;
   color: inherit;
 }
 
-.pf-essay__top {
+.pf-blog__top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -210,7 +234,7 @@
   margin-bottom: 8px;
 }
 
-.pf-essay__title {
+.pf-blog__title {
   font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 700;
@@ -221,9 +245,9 @@
   word-break: break-word;
   transition: color 0.15s;
 }
-.pf-essay__link:hover .pf-essay__title { color: var(--ink-mid); }
+.pf-blog__link:hover .pf-blog__title { color: var(--ink-mid); }
 
-.pf-essay__upvotes {
+.pf-blog__upvotes {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -235,12 +259,12 @@
   padding-top: 3px;
 }
 
-.pf-essay__upvote-icon {
+.pf-blog__upvote-icon {
   width: 13px;
   height: 13px;
 }
 
-.pf-essay__byline {
+.pf-blog__byline {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -248,7 +272,7 @@
   flex-wrap: wrap;
 }
 
-.pf-essay__tags {
+.pf-blog__tags {
   font-family: var(--font-ui);
   font-size: 0.7rem;
   font-weight: 500;
@@ -257,13 +281,13 @@
   color: var(--silver-dk);
 }
 
-.pf-essay__date {
+.pf-blog__date {
   font-family: var(--font-ui);
   font-size: 0.78rem;
   color: var(--silver-mid);
 }
 
-.pf-essay__excerpt {
+.pf-blog__excerpt {
   font-family: var(--font-body);
   font-style: italic;
   font-size: 0.92rem;
@@ -278,7 +302,7 @@
   text-overflow: ellipsis;
 }
 
-.pf-essay__cta {
+.pf-blog__cta {
   font-family: var(--font-ui);
   font-size: 0.7rem;
   font-weight: 600;
@@ -287,12 +311,12 @@
   color: var(--ink);
   transition: letter-spacing 0.2s;
 }
-.pf-essay__link:hover .pf-essay__cta { letter-spacing: 0.14em; }
+.pf-blog__link:hover .pf-blog__cta { letter-spacing: 0.14em; }
 
 /* ════════════════════════════════════════
    STATES
 ════════════════════════════════════════ */
-.pf-essays__state {
+.pf-blogs__state {
   font-family: var(--font-body);
   font-style: italic;
   font-size: 1rem;
@@ -301,7 +325,7 @@
   text-align: center;
 }
 
-.pf-essays__state--error { color: #9b2226; }
+.pf-blogs__state--error { color: #9b2226; }
 
 /* ════════════════════════════════════════
    RESPONSIVE
@@ -315,5 +339,5 @@
   .pf-stat { padding: 16px 24px 16px 18px; }
   .pf-stat__value { font-size: 1.9rem; }
 
-  .pf-essays { padding: 48px 20px 72px; }
+  .pf-blogs { padding: 48px 20px 72px; }
 }

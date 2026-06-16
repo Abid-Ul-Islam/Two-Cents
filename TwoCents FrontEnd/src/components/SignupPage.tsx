@@ -16,7 +16,7 @@ function SignupPage() {
   const { isLoggedIn, loading } = useAuth();
 
   useEffect(() => {
-    if (!loading && isLoggedIn) navigate('/dashboard', { replace: true });
+    if (!loading && isLoggedIn) navigate('/', { replace: true });
   }, [isLoggedIn, loading, navigate]);
 
   const [formData, setFormData] = useState({
