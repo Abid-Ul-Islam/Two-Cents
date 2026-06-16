@@ -14,17 +14,16 @@ export default function HomePage() {
 
         {/* Slim auth strip */}
         <div className="hero__strip">
-          {!loading && (
-            isLoggedIn
-              ? <>
-                  <Link to="/dashboard" className="strip-link">Dashboard</Link>
-                  <button onClick={logout} className="strip-btn">Logout</button>
-                </>
-              : <>
-                  <Link to="/login" className="strip-link">Login</Link>
-                  <Link to="/signup" className="strip-btn">Sign Up</Link>
-                </>
-          )}
+          {!loading && isLoggedIn
+            ? <>
+                <Link to="/dashboard" className="strip-link">Dashboard</Link>
+                <button onClick={logout} className="strip-btn">Logout</button>
+              </>
+            : <>
+                <Link to="/login" className="strip-link">Login</Link>
+                <Link to="/signup" className="strip-btn">Sign Up</Link>
+              </>
+          }
         </div>
 
         {/* Masthead */}

@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
         {
             policy.SetIsOriginAllowed(origin =>
                 {
-                    return origin.EndsWith(".vercel.app") ||
+                    return origin.EndsWith("https://two-cents-two.vercel.app/") ||
                            origin == "http://localhost:5173";
                 })
                 .AllowAnyHeader()
