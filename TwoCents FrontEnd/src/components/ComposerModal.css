@@ -1,0 +1,189 @@
+/* ════════════════════════════════════════
+   COMPOSER MODAL
+════════════════════════════════════════ */
+.composer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+}
+
+.composer-modal {
+  background: var(--white);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: fade-up 0.2s ease both;
+}
+
+.composer-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.composer-modal__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.composer-modal__close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--surface);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--ink-mid);
+  cursor: pointer;
+}
+.composer-modal__close:hover { background: var(--border); color: var(--ink); }
+
+.composer-modal__author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px 0;
+}
+
+.composer-modal__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.composer-modal__author-name {
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.composer-modal__error {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: #9b2226;
+  background: #fff0f0;
+  margin: 12px 20px 0;
+  padding: 10px 14px;
+  border-radius: 6px;
+}
+
+.composer-modal__form {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 20px 20px;
+}
+
+.composer-modal__title-input {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+  border: none;
+  outline: none;
+  padding: 8px 0;
+  margin-bottom: 4px;
+}
+.composer-modal__title-input::placeholder { color: var(--silver-mid); }
+
+.composer-modal__body-input {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.7;
+  border: none;
+  outline: none;
+  resize: vertical;
+  min-height: 160px;
+  padding: 8px 0;
+}
+.composer-modal__body-input::placeholder { color: var(--silver-mid); }
+
+.composer-modal__tags {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.composer-modal__tags-loading {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--silver-dk);
+  margin: 0;
+}
+
+.composer-modal__tags-error {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: #9b2226;
+  margin: 0 0 8px;
+}
+
+.composer-modal__tags-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.composer-modal__tag {
+  padding: 6px 14px;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--border-dk);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.composer-modal__tag:hover { background: var(--surface); border-color: var(--ink); }
+.composer-modal__tag--selected { background: var(--ink); color: var(--white); border-color: var(--ink); }
+.composer-modal__tag--selected:hover { background: var(--ink-mid); border-color: var(--ink-mid); }
+
+.composer-modal__submit {
+  margin-top: 18px;
+  padding: 12px 0;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.composer-modal__submit:hover:not(:disabled) { background: var(--ink-mid); }
+.composer-modal__submit:disabled { opacity: 0.6; cursor: not-allowed; }
