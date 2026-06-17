@@ -505,6 +505,7 @@
 .feed__footer {
   display: flex;
   align-items: center;
+  gap: 20px;
   padding-top: 14px;
   border-top: 1px solid var(--border);
 }
@@ -528,6 +529,27 @@
 .feed__upvotes--active .feed__upvote-icon { color: #2a9d4e; }
 
 .feed__upvote-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.feed__comments {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--silver-dk);
+  background: none;
+  border: none;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.feed__comments:hover { color: var(--ink); }
+
+.feed__comment-icon {
   width: 18px;
   height: 18px;
 }

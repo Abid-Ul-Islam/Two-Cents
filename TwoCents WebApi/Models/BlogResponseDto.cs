@@ -13,6 +13,8 @@ public class BlogResponseDto
     
     public long UpvoteCount { get; set; }
 
+    public long CommentCount { get; set; }
+
     public DateTime CreatedAt { get; set; }
     
     public bool IsUpvotedByCurrentUser  { get; set; }
