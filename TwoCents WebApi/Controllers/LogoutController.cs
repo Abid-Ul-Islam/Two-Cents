@@ -1,40 +1,54 @@
-﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using TwoCents_WebApi.DbContext;
-using TwoCents_WebApi.Entities;
 
 namespace TwoCents_WebApi.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[Controller]")]
 public class LogoutController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private const string RefreshTokenCookieName = "RefreshToken";
+    private const string AccessTokenCookieName  = "AccessToken";
 
     public LogoutController (AppDbContext context)
     {
         _context = context;
     }
 
+    // Intentionally NOT [Authorize]: logout must work even when the short-lived
+    // access token has already expired. The session is identified by the
+    // refresh-token cookie, not the access token.
     [HttpPost]
     public async Task<IActionResult> Logout ()
     {
-        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        string? refreshTokenValue = Request.Cookies[RefreshTokenCookieName];
 
-        List<RefreshToken> tokens = await _context.RefreshTokens
-            .Where(rt => rt.User.Id == userId)
-            .ToListAsync();
-
-        if (tokens.Count > 0)
+        if (!string.IsNullOrEmpty(refreshTokenValue))
         {
-            _context.RefreshTokens.RemoveRange(tokens);
-            await _context.SaveChangesAsync();
+            string? userId = await _context.RefreshTokens
+                .Where(rt => rt.Token == refreshTokenValue)
+                .Select(rt => rt.UserId)
+                .FirstOrDefaultAsync();
+
+            // Revoke every session for the user (log out everywhere). Falls back
+            // to deleting just the presented token if it isn't tied to a user.
+            if (userId is not null)
+            {
+                await _context.RefreshTokens
+                    .Where(rt => rt.UserId == userId)
+                    .ExecuteDeleteAsync();
+            }
+            else
+            {
+                await _context.RefreshTokens
+                    .Where(rt => rt.Token == refreshTokenValue)
+                    .ExecuteDeleteAsync();
+            }
         }
 
-        Response.Cookies.Delete("AccessToken", new CookieOptions
+        Response.Cookies.Delete(AccessTokenCookieName, new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
@@ -42,7 +56,7 @@ public class LogoutController : ControllerBase
             Path = "/"
         });
 
-        Response.Cookies.Delete("RefreshToken", new CookieOptions
+        Response.Cookies.Delete(RefreshTokenCookieName, new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
