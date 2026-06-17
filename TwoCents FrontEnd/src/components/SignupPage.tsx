@@ -28,12 +28,68 @@ function SignupPage() {
   });
 
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
+  const NAME_MIN = 3;
+  const NAME_MAX = 50;
+  const PASSWORD_MIN = 8;
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const passwordChecks = [
+    { label: `At least ${PASSWORD_MIN} characters`, ok: formData.password.length >= PASSWORD_MIN },
+    { label: "A lowercase letter", ok: /[a-z]/.test(formData.password) },
+    { label: "An uppercase letter", ok: /[A-Z]/.test(formData.password) },
+    { label: "A number", ok: /[0-9]/.test(formData.password) },
+    { label: "A special character", ok: /[^A-Za-z0-9]/.test(formData.password) },
+  ];
+
+  const validate = () => {
+    const errors: Record<string, string> = {};
+
+    const name = formData.name.trim();
+    if (!name) {
+      errors.name = "Full name is required";
+    } else if (name.length < NAME_MIN) {
+      errors.name = `Name must be at least ${NAME_MIN} characters`;
+    } else if (name.length > NAME_MAX) {
+      errors.name = `Name must be at most ${NAME_MAX} characters`;
+    }
+
+    const email = formData.email.trim();
+    if (!email) {
+      errors.email = "Email is required";
+    } else if (!EMAIL_REGEX.test(email)) {
+      errors.email = "Enter a valid email address";
+    }
+
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (passwordChecks.some((c) => !c.ok)) {
+      errors.password = "Password does not meet the requirements below";
+    }
+
+    if (!formData.confirmPassword) {
+      errors.confirmPassword = "Please confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    return errors;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: e.target.value,
+    });
+    // clear a field's error as the user edits it
+    setFieldErrors((prev) => {
+      if (!prev[name]) return prev;
+      const next = { ...prev };
+      delete next[name];
+      return next;
     });
   };
 
@@ -41,15 +97,12 @@ function SignupPage() {
     e.preventDefault();
     setError("");
 
-    if (!formData.name || !formData.email || !formData.password) {
-      setError("All fields are required");
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       return;
     }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+    setFieldErrors({});
 
     setIsLoading(true);
     try {
@@ -57,8 +110,8 @@ function SignupPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          Name: formData.name,
-          Email: formData.email,
+          Name: formData.name.trim(),
+          Email: formData.email.trim(),
           Gender: formData.gender,
           Password: formData.password,
         }),
@@ -140,9 +193,10 @@ function SignupPage() {
                   placeholder="Your full name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="sp-input"
-                  minLength={3}
+                  className={`sp-input${fieldErrors.name ? " sp-input--error" : ""}`}
+                  aria-invalid={!!fieldErrors.name}
                 />
+                {fieldErrors.name && <span className="sp-field-error">{fieldErrors.name}</span>}
               </div>
 
               <div className="sp-field">
@@ -153,8 +207,10 @@ function SignupPage() {
                   placeholder="your@email.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="sp-input"
+                  className={`sp-input${fieldErrors.email ? " sp-input--error" : ""}`}
+                  aria-invalid={!!fieldErrors.email}
                 />
+                {fieldErrors.email && <span className="sp-field-error">{fieldErrors.email}</span>}
               </div>
 
               <div className="sp-field">
@@ -174,11 +230,26 @@ function SignupPage() {
                 <input
                   name="password"
                   type="password"
-                  placeholder="Choose a password"
+                  placeholder="Choose a password (min 8 characters)"
                   value={formData.password}
                   onChange={handleChange}
-                  className="sp-input"
+                  className={`sp-input${fieldErrors.password ? " sp-input--error" : ""}`}
+                  aria-invalid={!!fieldErrors.password}
                 />
+                {fieldErrors.password && <span className="sp-field-error">{fieldErrors.password}</span>}
+                {formData.password && (
+                  <ul className="sp-pwd-reqs">
+                    {passwordChecks.map((c) => (
+                      <li
+                        key={c.label}
+                        className={c.ok ? "sp-pwd-req sp-pwd-req--ok" : "sp-pwd-req"}
+                      >
+                        <span className="sp-pwd-req__mark">{c.ok ? "✓" : "○"}</span>
+                        {c.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <div className="sp-field">
@@ -189,8 +260,10 @@ function SignupPage() {
                   placeholder="Repeat your password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="sp-input"
+                  className={`sp-input${fieldErrors.confirmPassword ? " sp-input--error" : ""}`}
+                  aria-invalid={!!fieldErrors.confirmPassword}
                 />
+                {fieldErrors.confirmPassword && <span className="sp-field-error">{fieldErrors.confirmPassword}</span>}
               </div>
 
               <button type="submit" className="sp-submit" disabled={isLoading}>

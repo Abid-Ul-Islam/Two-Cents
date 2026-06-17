@@ -525,7 +525,7 @@
 }
 .feed__upvotes:hover { color: var(--ink); }
 .feed__upvotes--active { color: var(--ink); }
-.feed__upvotes--active .feed__upvote-icon { color: #c9920a; }
+.feed__upvotes--active .feed__upvote-icon { color: #2a9d4e; }
 
 .feed__upvote-icon {
   width: 18px;
