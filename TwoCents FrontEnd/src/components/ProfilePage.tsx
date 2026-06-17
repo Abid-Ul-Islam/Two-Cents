@@ -5,6 +5,7 @@ import { fetchWithAuth } from '../utils/fetchWithAuth'
 import { capitalizeName } from '../utils/text'
 import { BASE_URL } from '../config'
 import ComposerModal from './ComposerModal'
+import ConfirmDialog from './ConfirmDialog'
 import './ProfilePage.css'
 
 interface Blog {
@@ -25,6 +26,25 @@ export default function ProfilePage() {
   const [blogsLoading, setBlogsLoading] = useState(true)
   const [blogsError, setBlogsError] = useState('')
   const [showComposer, setShowComposer] = useState(false)
+  const [pendingDelete, setPendingDelete] = useState<Blog | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  async function confirmDelete() {
+    if (!pendingDelete) return
+    setDeleting(true)
+    try {
+      const res = await fetchWithAuth(`${BASE_URL}/api/blog/${pendingDelete.id}`, {
+        method: 'DELETE',
+      })
+      if (!res.ok) throw new Error()
+      setBlogs(prev => prev.filter(b => b.id !== pendingDelete.id))
+      setPendingDelete(null)
+    } catch {
+      setBlogsError('Could not delete the blog. Please try again.')
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   function loadBlogs() {
     if (!user) return
@@ -147,6 +167,15 @@ export default function ProfilePage() {
                     <p className="pf-blog__excerpt">{b.body}</p>
                     <span className="pf-blog__cta">Read blog →</span>
                   </Link>
+                  <div className="pf-blog__actions">
+                    <button
+                      type="button"
+                      className="pf-blog__delete"
+                      onClick={() => setPendingDelete(b)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ol>
@@ -163,6 +192,16 @@ export default function ProfilePage() {
             setShowComposer(false)
             loadBlogs()
           }}
+        />
+      )}
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete this blog?"
+          message={`“${pendingDelete.title}” will be permanently deleted. This cannot be undone.`}
+          busy={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setPendingDelete(null)}
         />
       )}
 

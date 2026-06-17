@@ -313,6 +313,27 @@
 }
 .pf-blog__link:hover .pf-blog__cta { letter-spacing: 0.14em; }
 
+.pf-blog__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 24px 18px;
+}
+
+.pf-blog__delete {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--silver-dk);
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.pf-blog__delete:hover { color: #9b2226; }
+
 /* ════════════════════════════════════════
    STATES
 ════════════════════════════════════════ */

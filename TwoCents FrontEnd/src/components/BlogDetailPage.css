@@ -212,6 +212,27 @@
 }
 .bd-edit-link:hover { color: var(--ink); }
 
+.bd-author-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.bd-delete-link {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--silver-dk);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.bd-delete-link:hover { color: #9b2226; }
+
 /* ════════════════════════════════════════
    STATES
 ════════════════════════════════════════ */

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchWithAuth } from '../utils/fetchWithAuth'
 import { capitalizeName } from '../utils/text'
 import { BASE_URL } from '../config'
+import ConfirmDialog from './ConfirmDialog'
 import './BlogDetailPage.css'
 
 interface Tag {
@@ -27,12 +28,29 @@ interface Blog {
 export default function BlogDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
 
   const [blog, setBlog] = useState<Blog | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [upvoted, setUpvoted] = useState(false)
   const [upvoteCount, setUpvoteCount] = useState(0)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+
+  async function confirmDelete() {
+    setDeleting(true)
+    setDeleteError('')
+    try {
+      const res = await fetchWithAuth(`${BASE_URL}/api/blog/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error()
+      navigate('/profile')
+    } catch {
+      setDeleteError('Could not delete the blog. Please try again.')
+      setDeleting(false)
+    }
+  }
 
   async function toggleUpvote() {
     const wasUpvoted = upvoted
@@ -103,7 +121,16 @@ export default function BlogDetailPage() {
             <div className="bd-kicker">
               <span>◆ Blog</span>
               {user?.id === blog.authorId && (
-                <Link to={`/write/${blog.id}`} className="bd-edit-link">Edit →</Link>
+                <span className="bd-author-actions">
+                  <Link to={`/write/${blog.id}`} className="bd-edit-link">Edit →</Link>
+                  <button
+                    type="button"
+                    className="bd-delete-link"
+                    onClick={() => setConfirmingDelete(true)}
+                  >
+                    Delete
+                  </button>
+                </span>
               )}
             </div>
             <h1 className="bd-title">{blog.title}</h1>
@@ -138,6 +165,22 @@ export default function BlogDetailPage() {
           </article>
         )}
       </main>
+
+      {confirmingDelete && blog && (
+        <ConfirmDialog
+          title="Delete this blog?"
+          message={
+            deleteError ||
+            `“${blog.title}” will be permanently deleted. This cannot be undone.`
+          }
+          busy={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => {
+            setConfirmingDelete(false)
+            setDeleteError('')
+          }}
+        />
+      )}
 
     </div>
   )
