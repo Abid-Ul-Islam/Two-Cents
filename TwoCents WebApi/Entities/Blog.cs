@@ -6,11 +6,12 @@ public class Blog
 {
     [Key]
     public string Id { get; set; }
+    public string Body { get; set; }
     public string Title { get; set; }
     public string AuthorId { get; set; }
+
     public string AuthorName { get; set; }
 
-    public string Body { get; set; }
     
     public long UpvoteCount { get; set; }
 
@@ -20,4 +21,6 @@ public class Blog
     public ICollection<Tag> Tags { get; set; } = new List<Tag>();
     
     public ICollection<Upvote>Upvotes  { get; set; } = new List<Upvote>();
+    
+    public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }
