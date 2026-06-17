@@ -33,7 +33,6 @@ public class RegisterController : ControllerBase
         {
             Id = Guid.NewGuid().ToString(),
             Name = registerRequest.Name,
-            Gender = registerRequest.Gender,
             Email = registerRequest.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password)
         };

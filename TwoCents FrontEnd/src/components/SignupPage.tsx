@@ -22,7 +22,6 @@ function SignupPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    gender: "",
     password: "",
     confirmPassword: "",
   });
@@ -112,7 +111,6 @@ function SignupPage() {
         body: JSON.stringify({
           Name: formData.name.trim(),
           Email: formData.email.trim(),
-          Gender: formData.gender,
           Password: formData.password,
         }),
       });
@@ -211,18 +209,6 @@ function SignupPage() {
                   aria-invalid={!!fieldErrors.email}
                 />
                 {fieldErrors.email && <span className="sp-field-error">{fieldErrors.email}</span>}
-              </div>
-
-              <div className="sp-field">
-                <label className="sp-label">Gender</label>
-                <input
-                  name="gender"
-                  type="text"
-                  placeholder="e.g. Male / Female"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className="sp-input"
-                />
               </div>
 
               <div className="sp-field">
