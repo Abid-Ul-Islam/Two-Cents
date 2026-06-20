@@ -305,6 +305,23 @@
   color: var(--silver-mid);
 }
 
+.bd-comment__delete {
+  margin-left: auto;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--silver-mid);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.bd-comment__delete:hover:not(:disabled) { color: #9b2226; }
+.bd-comment__delete:disabled { opacity: 0.5; cursor: not-allowed; }
+
 .bd-comment__content {
   font-family: var(--font-body);
   font-size: 1rem;

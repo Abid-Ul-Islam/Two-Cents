@@ -76,6 +76,7 @@ public class CommentController : ControllerBase
             {
                 id = c.Id,
                 content = c.Content,
+                authorId = c.AuthorId,
                 authorName = c.AuthorName,
                 createdAt = c.CreatedAt,
                 isDeleted = c.IsDeleted
@@ -83,5 +84,35 @@ public class CommentController : ControllerBase
             .ToListAsync();
 
         return Ok(res);
+    }
+
+    [HttpDelete("{commentId}")]
+    public async Task<IActionResult> DeleteComment(string commentId)
+    {
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId is null)
+            return Unauthorized();
+
+        var comment = await _context.Comments.FindAsync(commentId);
+
+        if (comment is null || comment.IsDeleted)
+            return NotFound();
+
+        if (comment.AuthorId != userId)
+            return Forbid();
+
+        await using var tx = await _context.Database.BeginTransactionAsync();
+
+        await _context.Blogs
+            .Where(b => b.Id == comment.BlogId)
+            .ExecuteUpdateAsync(s => s.SetProperty(
+                b => b.CommentCount, b => b.CommentCount - 1));
+
+        comment.IsDeleted = true;
+        await _context.SaveChangesAsync();
+        await tx.CommitAsync();
+
+        return NoContent();
     }
 }

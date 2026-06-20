@@ -29,6 +29,7 @@ interface Blog {
 interface Comment {
   id: string
   content: string
+  authorId: string
   authorName: string
   createdAt: string
   isDeleted: boolean
@@ -53,6 +54,7 @@ export default function BlogDetailPage() {
   const [newComment, setNewComment] = useState('')
   const [posting, setPosting] = useState(false)
   const [postError, setPostError] = useState('')
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState('')
@@ -104,6 +106,20 @@ export default function BlogDetailPage() {
       } finally {
         setCommentsLoading(false)
       }
+    }
+  }
+
+  async function deleteComment(commentId: string) {
+    setDeletingCommentId(commentId)
+    try {
+      const res = await fetchWithAuth(`${BASE_URL}/api/comment/${commentId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error()
+      setComments(prev => prev.filter(c => c.id !== commentId))
+      setCommentCount(prev => prev - 1)
+    } catch {
+      // silently fail — comment stays visible
+    } finally {
+      setDeletingCommentId(null)
     }
   }
 
@@ -294,6 +310,16 @@ export default function BlogDetailPage() {
                           <span className="bd-comment__date">
                             {new Date(c.createdAt).toLocaleDateString()}
                           </span>
+                          {user?.id === c.authorId && (
+                            <button
+                              type="button"
+                              className="bd-comment__delete"
+                              onClick={() => deleteComment(c.id)}
+                              disabled={deletingCommentId === c.id}
+                            >
+                              {deletingCommentId === c.id ? 'Deleting…' : 'Delete'}
+                            </button>
+                          )}
                         </div>
                         <p className="bd-comment__content">{c.content}</p>
                       </li>
