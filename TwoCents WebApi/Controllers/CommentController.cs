@@ -60,6 +60,7 @@ public class CommentController : ControllerBase
         {
             id = comment.Id,
             content = comment.Content,
+            authorId = comment.AuthorId,
             authorName = comment.AuthorName,
             createdAt = comment.CreatedAt,
             isDeleted = comment.IsDeleted
