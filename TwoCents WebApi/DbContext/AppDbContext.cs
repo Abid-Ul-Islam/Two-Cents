@@ -9,7 +9,40 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     protected override void OnModelCreating (ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.HasKey(c => c.Id);
 
+            entity.Property(c => c.Content)
+                .IsRequired()
+                .HasMaxLength(2000);
+
+            entity.Property(c => c.AuthorName)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(c => c.CreatedAt)
+                .IsRequired();
+
+            entity.Property(c => c.IsDeleted)
+                .HasDefaultValue(false);
+
+            entity.HasOne(c => c.User)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(c => c.Blog)
+                .WithMany(b => b.Comments)
+                .HasForeignKey(c => c.BlogId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(c => c.BlogId);
+            entity.HasIndex(c => c.AuthorId);
+            entity.HasIndex(c => c.CreatedAt);
+        });
+        
         modelBuilder.Entity<Blog>()
             .HasOne(b => b.User)
             .WithMany(u => u.Blogs)
@@ -74,4 +107,6 @@ public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<Tag> Tags { get; set; }
     
     public DbSet<Upvote> Upvotes { get; set; }
+    
+    public DbSet<Comment> Comments { get; set; }
 }

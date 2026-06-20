@@ -43,6 +43,7 @@ public class BlogController : ControllerBase
                 Body = b.Body,
                 AuthorName = b.AuthorName,
                 UpvoteCount = b.UpvoteCount,
+                CommentCount = b.CommentCount,
                 CreatedAt = b.CreatedAt,
                 AuthorId = b.AuthorId,
                 IsUpvotedByCurrentUser =
@@ -134,11 +135,12 @@ public class BlogController : ControllerBase
                 Body = b.Body,
                 AuthorName = b.AuthorName,
                 UpvoteCount = b.UpvoteCount,
+                CommentCount = b.CommentCount,
                 CreatedAt = b.CreatedAt,
                 AuthorId = b.AuthorId,
                 IsUpvotedByCurrentUser =
                     b.Upvotes.Any(u => u.UserId == userId),
-                    
+
                 Tags = b.Tags.Select(t => new TagDto
                 {
                     Id = t.Id,

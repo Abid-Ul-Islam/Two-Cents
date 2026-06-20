@@ -6,8 +6,12 @@ public class User
     public string Name { get; set; }
     public string Email { get; set; }
     public string PasswordHash { get; set; }
-    public ICollection<Blog> Blogs { get; set; } = new List<Blog>();
-    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     
+    public ICollection<Blog> Blogs { get; set; } = new List<Blog>();
     public ICollection<Upvote> Upvotes { get; set; } = new List<Upvote>();
+    
+    public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+    
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
 }

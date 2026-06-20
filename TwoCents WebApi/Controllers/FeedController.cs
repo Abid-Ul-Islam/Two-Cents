@@ -33,6 +33,7 @@ public class FeedController : ControllerBase
                 Body = b.Body,
                 AuthorName = b.AuthorName,
                 UpvoteCount = b.UpvoteCount,
+                CommentCount = b.CommentCount,
                 CreatedAt = b.CreatedAt,
                 AuthorId = b.AuthorId,
                 IsUpvotedByCurrentUser =
